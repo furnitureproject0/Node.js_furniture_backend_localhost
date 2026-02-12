@@ -44,7 +44,8 @@ User.belongsToMany(Company, {
         model: EmployeeCompany,
         unique: false
     },
-    foreignKey: '{employee_id',
+    // foreignKey: '{employee_id',
+    foreignKey: 'employee_id',
     otherKey: 'company_id',
     as: 'employedAt'
 });
