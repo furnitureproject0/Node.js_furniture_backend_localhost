@@ -28,7 +28,7 @@ import { createServer } from 'http';
 import setupSocketIO from './config/socket.js';
 import errorMiddleware from './middleware/error-mw.js';
 import { testMail } from './controllers/testMailController.js';
-// import './config/passport.js';
+import './config/passport.js';
 
 
 const app = express();
