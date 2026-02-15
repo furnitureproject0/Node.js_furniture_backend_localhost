@@ -149,7 +149,10 @@ export const seed = async () => {
                 lat: 40.7128,
                 lon: -74.0060,
                 type: 'apartment',
-                floor: 3
+                floor: 3,
+                city: 'Example City',
+                country: 'Example Country',
+                zip_code: '12345'
             }, { transaction: t });
 
             const destinationLocation = await Location.create({
@@ -157,7 +160,10 @@ export const seed = async () => {
                 lat: 40.7580,
                 lon: -73.9855,
                 type: 'house',
-                floor: 1
+                floor: 1,
+                city: 'Example City',
+                country: 'Example Country',
+                zip_code: '67890'
             }, { transaction: t });
 
             // Create an Order for the client (John - users[2])

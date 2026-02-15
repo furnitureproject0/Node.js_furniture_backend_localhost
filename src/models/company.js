@@ -24,13 +24,13 @@ const Company = sequelize.define('Company', {
         type: DataTypes.TEXT,
         allowNull: false
     },
-    lon: {
-        type: DataTypes.DECIMAL(10, 7),
-        allowNull: true,
-    },
-    lat: {
-        type: DataTypes.DECIMAL(10, 7),
-        allowNull: true,
+    location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // make it reverse
+        references: {
+            model: 'Locations',
+            key: 'id'
+        }
     },
     email: {
         type: DataTypes.STRING,
