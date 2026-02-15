@@ -55,6 +55,10 @@ const Company = sequelize.define('Company', {
         defaultValue: 'active',
         allowNull: false
     },
+    type: {
+        type: DataTypes.ENUM('internal', 'external'),
+        allowNull: true
+    }
 }, {
     tableName: 'companies',
     timestamps: true,
