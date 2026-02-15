@@ -333,6 +333,28 @@ Addition.belongsToMany(Service, {
     as: 'services'
 });
 
+// User - Location associations
+User.belongsTo(Location, {
+    foreignKey: 'location_id',
+    as: 'location'
+});
+
+Location.hasMany(User, {
+    foreignKey: 'location_id',
+    as: 'residents'
+});
+
+// Company - Location associations
+Company.belongsTo(Location, {
+    foreignKey: 'location_id',
+    as: 'location'
+});
+
+Location.hasMany(Company, {
+    foreignKey: 'location_id',
+    as: 'companies'
+});
+
 
 export {
     User,
