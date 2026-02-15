@@ -146,16 +146,16 @@ export const seed = async () => {
             // Create Locations for the order
             const pickupLocation = await Location.create({
                 address: '456 Oak Street, Example City',
-                latitude: 40.7128,
-                longitude: -74.0060,
+                lat: 40.7128,
+                lon: -74.0060,
                 type: 'apartment',
                 floor: 3
             }, { transaction: t });
 
             const destinationLocation = await Location.create({
                 address: '789 Pine Avenue, Example City',
-                latitude: 40.7580,
-                longitude: -73.9855,
+                lat: 40.7580,
+                lon: -73.9855,
                 type: 'house',
                 floor: 1
             }, { transaction: t });

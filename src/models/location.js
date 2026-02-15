@@ -15,6 +15,18 @@ const Location = sequelize.define('Location', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    country: {
+        type: DataTypes.STRING,
+        allowNull: true // make it reverse
+    },
+    city: {
+        type: DataTypes.STRING,
+        allowNull: true // make it reverse
+    },
+    zip_code: {
+        type: DataTypes.STRING,
+        allowNull: true // make it reverse
+    },
     lat: {
         type: DataTypes.DECIMAL(10, 8),
         allowNull: true
