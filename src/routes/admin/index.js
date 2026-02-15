@@ -6,6 +6,5 @@ const router = express.Router();
 
 router.use(protect);
 
-router.get('/search-clients', authorize('company_admin', 'company_secretary', 'site_admin'), validate(searchClientsSchema), searchClients);
 
 export default router;

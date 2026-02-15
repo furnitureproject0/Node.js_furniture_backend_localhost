@@ -30,6 +30,10 @@ import errorMiddleware from './middleware/error-mw.js';
 import { testMail } from './controllers/testMailController.js';
 import './config/passport.js';
 
+//
+import admin from './routes/admin/index.js';
+//
+
 
 const app = express();
 
@@ -59,7 +63,7 @@ app.use('/api/site-admin', siteAdminRoutes);
 app.use('/api/seed', seedRoutes);
 
 // new routes
-app.use('/api/admin', siteAdminRoutes);
+app.use('/api/admin', admin);
 
 // Test mail endpoint
 app.get('/api/testmail', testMail);
