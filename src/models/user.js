@@ -1,7 +1,7 @@
 import sequelize from '../config/database.js';
 import { DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
-import Company from './company.js';
+// import Company from './company.js';
 
 const User = sequelize.define('User', {
     id: {
@@ -43,14 +43,6 @@ const User = sequelize.define('User', {
         allowNull: false,
         defaultValue: 'client'
     },
-    company_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: Company,
-            key: 'id',
-        }
-    },
     is_verified: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -62,7 +54,19 @@ const User = sequelize.define('User', {
         references: {
             model: 'companies',
             key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+    },
+    location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'locations',
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     }
 }, {
     tableName: 'users',
