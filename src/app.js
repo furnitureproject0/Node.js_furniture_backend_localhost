@@ -58,6 +58,9 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/site-admin', siteAdminRoutes);
 app.use('/api/seed', seedRoutes);
 
+// new routes
+app.use('/api/admin', siteAdminRoutes);
+
 // Test mail endpoint
 app.get('/api/testmail', testMail);
 
