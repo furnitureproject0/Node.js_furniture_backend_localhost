@@ -50,11 +50,11 @@ const Location = sequelize.define('Location', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    has_elevator: {
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
-        defaultValue: false
-    },
+    // has_elevator: {
+    //     type: DataTypes.BOOLEAN,
+    //     allowNull: true,
+    //     defaultValue: false
+    // },
     notes: {
         type: DataTypes.TEXT,
         allowNull: true
