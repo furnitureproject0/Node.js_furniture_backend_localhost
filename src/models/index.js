@@ -159,6 +159,7 @@ User.hasMany(Phone, {
 Phone.belongsTo(User, {
     foreignKey: 'owner_id',
     constraints: false,
+    as: 'user'
 });
 
 // For companies
@@ -174,6 +175,7 @@ Company.hasMany(Phone, {
 Phone.belongsTo(Company, {
     foreignKey: 'owner_id',
     constraints: false,
+    as: 'company'
 });
 
 

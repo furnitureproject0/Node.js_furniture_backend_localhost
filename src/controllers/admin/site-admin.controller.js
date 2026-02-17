@@ -1,7 +1,9 @@
 import asyncHandler from 'express-async-handler';
-import { User, Location } from '../../models/index.js';
+import { User, Location, Phone } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
-import { Op } from 'sequelize'
+import { Op } from 'sequelize';
+import sequelize from '../../config/database.js';
+
 
 
 export const searchClients = asyncHandler(async (req, res) => {
@@ -23,6 +25,17 @@ export const searchClients = asyncHandler(async (req, res) => {
                 { '$location.address$': { [Op.like]: `%${search}%` } },
                 { '$location.city$': { [Op.like]: `%${search}%` } },
                 { '$location.zip_code$': { [Op.like]: `%${search}%` } },
+                // { 'phones.phone': { [Op.like]: `%${search}%` } },
+
+                sequelize.literal(`
+                    EXISTS (
+                        SELECT 1
+                        FROM phones AS p
+                        WHERE p.owner_id = User.id
+                        AND p.owner_type = 'User'
+                        AND p.phone LIKE '%${search}%'
+                    )
+                `)
             ],
         }),
     };
@@ -36,8 +49,17 @@ export const searchClients = asyncHandler(async (req, res) => {
                 as: 'location',
                 attributes: ['address', 'city', 'zip_code'],
                 required: false
+            },
+            {
+                model: Phone,
+                as: 'phones',
+                attributes: ['phone'],
+                required: false,
+                // where: {owner_type: 'User'}
             }
         ],
+        distinct: true,
+        subQuery: false,
         limit,
         offset,
         attributes: ['id', 'name', 'email', 'is_verified', 'createdAt'],
