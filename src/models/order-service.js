@@ -24,6 +24,44 @@ const OrderService = sequelize.define('OrderService', {
             key: 'id'
         }
     },
+    to_location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Locations',
+            key: 'id'
+        }
+    },
+    from_location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Locations',
+            key: 'id'
+        }
+    },
+    pricing_type: {
+        type: DataTypes.ENUM('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'custom'),
+        allowNull: false
+    },
+    price_per_unit: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
+    min_units: {
+        type: DataTypes.FLOAT,
+        allowNull: true
+    },
+    max_units: {
+        type: DataTypes.FLOAT,
+        allowNull: true
+    },
+    minimum_charge: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
     company_id: {
         type: DataTypes.INTEGER,
         allowNull: true, // Null until assigned
@@ -46,6 +84,20 @@ const OrderService = sequelize.define('OrderService', {
         ),
         allowNull: false,
         defaultValue: 'pending'
+    },
+    total_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
+    details: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: {}
+    },
+    notes: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     tableName: 'order_services',

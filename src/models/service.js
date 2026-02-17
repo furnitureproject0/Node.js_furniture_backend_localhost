@@ -21,10 +21,6 @@ const Service = sequelize.define('Service', {
         allowNull: true,
         defaultValue: 0
     },
-    pricing_type: {
-        type: DataTypes.ENUM('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'custom'),
-        allowNull: false
-    },
     is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
