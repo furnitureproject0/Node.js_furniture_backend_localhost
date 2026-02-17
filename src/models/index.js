@@ -297,25 +297,25 @@ Transaction.belongsTo(User, {
 });
 
 // Order Location associations
-Order.belongsTo(Location, {
-    foreignKey: 'location_id',
-    as: 'location'
-});
+// Order.belongsTo(Location, {
+//     foreignKey: 'location_id',
+//     as: 'location'
+// });
 
-Order.belongsTo(Location, {
-    foreignKey: 'destination_location_id',
-    as: 'destinationLocation'
-});
+// Order.belongsTo(Location, {
+//     foreignKey: 'destination_location_id',
+//     as: 'destinationLocation'
+// });
 
-Location.hasMany(Order, {
-    foreignKey: 'location_id',
-    as: 'pickupOrders'
-});
+// Location.hasMany(Order, {
+//     foreignKey: 'location_id',
+//     as: 'pickupOrders'
+// });
 
-Location.hasMany(Order, {
-    foreignKey: 'destination_location_id',
-    as: 'destinationOrders'
-});
+// Location.hasMany(Order, {
+//     foreignKey: 'destination_location_id',
+//     as: 'destinationOrders'
+// });
 
 // service - addition many-to-many relationship through ServiceAdditions
 
