@@ -356,6 +356,27 @@ Location.hasMany(Company, {
 });
 
 
+OrderService.belongsTo(Location, {
+    foreignKey: 'to_location_id',
+    as: 'toLocation'
+});
+
+OrderService.belongsTo(Location, {
+    foreignKey: 'from_location_id',
+    as: 'fromLocation'
+});
+
+Location.hasMany(OrderService, {
+    foreignKey: 'from_location_id',
+    as: 'fromLocationOrders'
+});
+
+Location.hasMany(OrderService, {
+    foreignKey: 'to_location_id',
+    as: 'toLocationOrders'
+});
+
+
 export {
     User,
     Company,

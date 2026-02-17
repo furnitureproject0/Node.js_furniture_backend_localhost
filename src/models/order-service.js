@@ -28,7 +28,7 @@ const OrderService = sequelize.define('OrderService', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Locations',
+            model: 'locations',
             key: 'id'
         }
     },
@@ -36,7 +36,7 @@ const OrderService = sequelize.define('OrderService', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Locations',
+            model: 'locations',
             key: 'id'
         }
     },
