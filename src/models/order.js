@@ -17,43 +17,39 @@ const Order = sequelize.define('Order', {
             key: 'id'
         }
     },
-    location_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Location,
-            key: 'id'
-        }
-    },
-    destination_location_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: Location,
-            key: 'id'
-        }
-    },
-    preferred_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-    preferred_time: {
-        type: DataTypes.TIME,
-        allowNull: false
-    },
-    number_of_rooms: {
-        type: DataTypes.FLOAT,
-        allowNull: true
-    },
-    rooms: {
-        type: DataTypes.JSON,
-        allowNull: true,
-        defaultValue: []
-    },
-    notes: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
+    // location_id: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    //     references: {
+    //         model: Location,
+    //         key: 'id'
+    //     }
+    // },
+    // destination_location_id: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: true,
+    //     references: {
+    //         model: Location,
+    //         key: 'id'
+    //     }
+    // },
+    // preferred_date: {
+    //     type: DataTypes.DATEONLY,
+    //     allowNull: false
+    // },
+    // preferred_time: {
+    //     type: DataTypes.TIME,
+    //     allowNull: false
+    // },
+    // number_of_rooms: {
+    //     type: DataTypes.FLOAT,
+    //     allowNull: true
+    // },
+    // rooms: {
+    //     type: DataTypes.JSON,
+    //     allowNull: true,
+    //     defaultValue: []
+    // },
     images: {
         type: DataTypes.JSON,
         allowNull: true,
@@ -69,6 +65,14 @@ const Order = sequelize.define('Order', {
         ),
         allowNull: false,
         defaultValue: 'pending'
+    },
+    total_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
+    },
+    notes: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     tableName: 'orders',
