@@ -26,6 +26,42 @@ const OrderServiceAddition = sequelize.define('OrderServiceAddition', {
             key: 'id'
         }
     },
+    pricing_type: {
+        type: DataTypes.ENUM('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom'),
+        allowNull: false
+    },
+    price_per_unit: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
+    min_units: {
+        type: DataTypes.FLOAT,
+        allowNull: true
+    },
+    max_units: {
+        type: DataTypes.FLOAT,
+        allowNull: true
+    },
+    minimum_charge: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
+    },
+    details: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: {}
+    },
+    details: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: {}
+    },
+    total_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
+    },
     note: {
         type: DataTypes.STRING,
         allowNull: true,

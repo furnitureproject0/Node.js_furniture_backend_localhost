@@ -41,7 +41,7 @@ const OrderService = sequelize.define('OrderService', {
         }
     },
     pricing_type: {
-        type: DataTypes.ENUM('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'custom'),
+        type: DataTypes.ENUM('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom'),
         allowNull: false
     },
     price_per_unit: {
