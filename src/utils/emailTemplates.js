@@ -214,3 +214,38 @@ export const updateClientProfileTemplate = ({ name }) => {
         </html>
     `;
 };
+
+export const accountDeletedByAdminTemplate = ({ name }) => {
+    return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Account Deleted by Admin</title>
+            <style>
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    font-family: Arial, sans-serif;
+                }
+                .notice {
+                    color: #f44336;
+                    text-align: center;
+                    font-size: 20px;
+                    margin: 20px 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Hello ${name},</h2>
+                <div class="notice">Your account has been deleted by the site/company administrator.</div>
+                <p>If you believe this was a mistake or have any questions, please contact our support team immediately.</p>
+                <br>
+                <p>Best regards,<br>Team Angebots</p>
+            </div>
+        </body>
+        </html>
+    `;
+};

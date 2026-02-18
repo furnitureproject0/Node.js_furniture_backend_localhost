@@ -268,7 +268,7 @@ export const verifyEmail = asyncHandler(async (req, res, next) => {
         try {
             await createAndSendNotification({
                 user_id: user.id,
-                title: 'Email Verified 🎉',
+                title: 'Email Verified',
                 message: `Hi ${user.name}, your email has been successfully verified! You can now explore all the features of Angebots.`,
                 type: 'email_verified',
                 payload: {

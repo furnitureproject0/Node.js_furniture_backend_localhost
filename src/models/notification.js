@@ -43,7 +43,9 @@ const Notification = sequelize.define('Notification', {
             'order_status',
             'internal_company',
             'external_company',
-            'mother_company'
+            'mother_company',
+            'account_deleted',
+            'update'
         ),
         allowNull: false,
         defaultValue: 'system'

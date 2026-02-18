@@ -1,10 +1,11 @@
 import asyncHandler from 'express-async-handler';
 import { User, Location, Phone } from '../../models/index.js';
 import OTP from '../../models/otp.js';
+import Notification from '../../models/notification.js';
 import AppError from '../../utils/AppError.js';
 import { Op } from 'sequelize';
 import sequelize from '../../config/database.js';
-import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate } from '../../utils/emailTemplates.js';
+import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate, accountDeletedByAdminTemplate } from '../../utils/emailTemplates.js';
 import sendEmail from '../../utils/sendEmail.js';
 import { createAndSendNotification } from '../../utils/notifications.js';
 import { generateOTP } from '../../utils/genarators/otp-generator.js';
@@ -266,7 +267,7 @@ export const updateClient = asyncHandler(async (req, res) => {
             user_id: user.id,
             title: 'Profile Updated',
             message: `Hi ${user.name}, your profile has been updated by an administrator.`,
-            type: 'welcome', // I update it later.
+            type: 'update', 
         }, { transaction });
 
         await transaction.commit();
@@ -301,6 +302,70 @@ export const updateClient = asyncHandler(async (req, res) => {
                     ]
                 })
             }
+        });
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+});
+
+
+export const deleteClient = asyncHandler(async (req, res) => {
+    const transaction = await sequelize.transaction();
+
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findByPk(userId, { transaction });
+
+        if (!user || user.role !== 'client') {
+            throw new AppError('Client not found', 404);
+        }
+
+        await Phone.destroy({ 
+            where: { owner_id: userId, owner_type: 'User' }, 
+            transaction 
+        });
+        
+        if (user.location_id) {
+            await Location.destroy({ 
+                where: { id: user.location_id }, 
+                transaction 
+            });
+        }
+
+        await Notification.destroy({
+            where: { user_id: userId },
+            transaction
+        });
+
+        await OTP.destroy({
+            where: { user_id: userId },
+            transaction
+        });
+
+        await user.destroy({ transaction });
+
+        await createAndSendNotification({
+            user_id: req.user.id,
+            title: 'Account Deleted',
+            message: `Hi ${user.name}, your account has been deleted by an administrator.`,
+            type: 'account_deleted',
+        }, { transaction });
+
+        await transaction.commit();
+
+        await sendEmail({
+            to: user.email,
+            subject: 'Account Deleted by Admin',
+            html: accountDeletedByAdminTemplate({
+                name: user.name
+            })
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Client deleted successfully"
         });
     } catch (error) {
         await transaction.rollback();
