@@ -135,3 +135,46 @@ export const generatePasswordResetEmailTemplate = ({ name, otp }) => {
         </html>
     `;
 };
+
+export const sendNewClientAccountCredentialsTemplate = ({ name, email, password }) => {
+    return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Your New Account Credentials</title>
+            <style>
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    font-family: Arial, sans-serif;
+                }
+                .credentials {
+                    background-color: #f5f5f5;
+                    padding: 20px;
+                    border-radius: 5px;
+                    margin: 20px 0;
+                }
+                .credentials p {
+                    font-size: 16px;
+                    margin: 10px 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Hello ${name},</h2>
+                <p>Your account has been created successfully! Here are your login credentials:</p>
+                <div class="credentials">
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Password:</strong> ${password}</p>
+                </div>
+                <p>Please log in to your account and change your password as soon as possible for security reasons.</p>
+                <br>
+                <p>Best regards,<br>Team Angebots</p>
+            </div>
+        </body>
+        </html>
+    `;
+};

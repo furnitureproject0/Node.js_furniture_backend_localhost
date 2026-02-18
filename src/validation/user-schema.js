@@ -22,5 +22,5 @@ export const userBaseSchema = Joi.object({
     company_id: Joi.number()
         .integer()
         .optional(),
-    locationSchema,
+    location: locationSchema,
 })
