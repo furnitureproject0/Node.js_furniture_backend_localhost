@@ -142,12 +142,12 @@ export const createClient = asyncHandler(async (req, res) => {
             })
         });
 
-        // await createAndSendNotification({
-        //     user_id: user.id,
-        //     title: 'Welcome to Angebots',
-        //     message: `Hi ${user.name}, thank you for joining Angebots! Please verify your email to get started.`,
-        //     type: 'welcome',
-        // }, { transaction });
+        await createAndSendNotification({
+            user_id: newUser.id,
+            title: 'Welcome to Angebots',
+            message: `Hi ${newUser.name}, thank you for joining Angebots! Please verify your email to get started.`,
+            type: 'welcome',
+        }, { transaction });
 
 
         await transaction.commit();
