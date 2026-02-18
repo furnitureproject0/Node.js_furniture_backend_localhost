@@ -3,7 +3,7 @@ import { User, Location, Phone } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
 import { Op } from 'sequelize';
 import sequelize from '../../config/database.js';
-import { sendNewClientAccountCredentialsTemplate } from '../../utils/emailTemplates.js';
+import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate } from '../../utils/emailTemplates.js';
 import sendEmail from '../../utils/sendEmail.js';
 import { createAndSendNotification } from '../../utils/notifications.js';
 
@@ -155,9 +155,138 @@ export const createClient = asyncHandler(async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Client created successfully",
-            data: newUser.toJSON()
+            data: {
+                user: newUser.toJSON()
+            }
         });
 
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+});
+
+
+export const updateClient = asyncHandler(async (req, res) => {
+    const transaction = await sequelize.transaction();
+
+    try {
+        const userId = req.params.id;
+        const { name, email, birthdate, location, phones } = req.body;
+
+        const user = await User.findByPk(userId, { transaction });
+
+        if (!user || user.role !== 'client') {
+            throw new AppError('Client not found', 404);
+        }
+
+        let updateData = {};
+
+        if (name && name !== user.name) {
+            updateData.name = name;
+        }
+
+        if (birthdate && birthdate !== user.birthdate) {
+            updateData.birthdate = birthdate;
+        }
+
+        if (email && email !== user.email) {
+            const emailExists = await User.findOne({
+                where: { email },
+                transaction
+            });
+
+            if (emailExists) {
+                throw new AppError('Email already in use', 409);
+            }
+
+            updateData.email = email;
+            updateData.is_verified = false; // Mark as unverified if email changes
+        }
+
+        if (phones && phones.length > 0) {
+            const existingPhones = await Phone.findAll({
+                where: {
+                    phone: { [Op.in]: phones },
+                    owner_type: 'User',
+                    owner_id: { [Op.ne]: userId }
+                },
+                transaction
+            });
+
+            if (existingPhones.length > 0) {
+                const duplicates = existingPhones.map(p => p.phone).join(', ');
+                throw new AppError(
+                    `The following phone numbers are already in use: ${duplicates}`,
+                    409
+                );
+            }
+        }
+
+        let locationId = user.location_id;
+        if (location) {
+            if (locationId) {
+                await Location.update(location, { where: { id: locationId }, transaction });
+            } else {
+                const newLocation = await Location.create(location, { transaction });
+                locationId = newLocation.id;
+            }
+        }
+
+        updateData.location_id = locationId;
+
+        await user.update(updateData, { transaction });
+
+        if (phones) {
+            await Phone.destroy({ where: { owner_id: userId, owner_type: 'User' }, transaction });
+            const phonesToCreate = phones.map(phone => ({
+                phone,
+                owner_id: userId,
+                owner_type: 'User'
+            }));
+            await Phone.bulkCreate(phonesToCreate, { transaction });
+        }
+
+        await sendEmail({
+            to: user.email,
+            subject: 'Profile Updated by Admin',
+            html: updateClientProfileTemplate({
+                name: user.name
+            })
+        });
+
+        if (!user.is_verified) {
+            await sendEmail({
+                to: user.email,
+                subject: 'Email Verification Required',
+                html: generateVerificationEmailTemplate({
+                    name: user.name,
+                    verification_url: `${process.env.FRONTEND_URL}/verify-email?token=${user.verification_token}`
+                })
+            });
+        }
+
+        await createAndSendNotification({
+            user_id: user.id,
+            title: 'Profile Updated',
+            message: `Hi ${user.name}, your profile has been updated by an administrator.`,
+            type: 'welcome', // I update it later.
+        }, { transaction });
+
+        await transaction.commit();
+
+        res.status(200).json({
+            success: true,
+            message: "Client updated successfully",
+            data: {
+                user: await User.findByPk(userId, {
+                    include: [
+                        { model: Location, as: 'location', attributes: ['address', 'city', 'zip_code'] },
+                        { model: Phone, as: 'phones', attributes: ['phone'], where: { owner_type: 'User' }, required: false }
+                    ]
+                })
+            }
+        });
     } catch (error) {
         await transaction.rollback();
         throw error;
