@@ -25,7 +25,15 @@ export const userBaseSchema = Joi.object({
     location: locationSchema,
 })
 
-export const updateUserSchema = userBaseSchema.fork(
-    Object.keys(userBaseSchema.describe().keys),
-    (schema) => schema.optional()
-).min(1);
+export const updateUserSchema = Joi.object({
+    name,
+    email,
+    birthdate,
+    phones,
+    location: locationSchema
+})
+.fork(
+    ['name', 'email', 'birthdate', 'phones', 'location'],
+    schema => schema.optional()
+)
+.min(1);

@@ -205,7 +205,7 @@ export const updateClientProfileTemplate = ({ name }) => {
         <body>
             <div class="container">
                 <h2>Hello ${name},</h2>
-                <div class="notice">⚡ Your profile information has been updated by the site/company administrator.</div>
+                <div class="notice">Your profile information has been updated by the site/company administrator.</div>
                 <p>If you did not expect this change or have any questions, please contact our support team immediately.</p>
                 <br>
                 <p>Best regards,<br>Team Angebots</p>

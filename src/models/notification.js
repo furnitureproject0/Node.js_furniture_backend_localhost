@@ -32,7 +32,18 @@ const Notification = sequelize.define('Notification', {
             'offer',
             'chat',
             'employment',
-            'system'
+            'system',
+            // add more types as needed
+            'admin_alerts',
+            'company_updates',
+            'security_alerts',
+            'promotions',
+            'reminders',
+            'feedback_requests',
+            'order_status',
+            'internal_company',
+            'external_company',
+            'mother_company'
         ),
         allowNull: false,
         defaultValue: 'system'

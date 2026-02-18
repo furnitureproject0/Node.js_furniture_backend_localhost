@@ -1,11 +1,13 @@
 import asyncHandler from 'express-async-handler';
 import { User, Location, Phone } from '../../models/index.js';
+import OTP from '../../models/otp.js';
 import AppError from '../../utils/AppError.js';
 import { Op } from 'sequelize';
 import sequelize from '../../config/database.js';
 import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate } from '../../utils/emailTemplates.js';
 import sendEmail from '../../utils/sendEmail.js';
 import { createAndSendNotification } from '../../utils/notifications.js';
+import { generateOTP } from '../../utils/genarators/otp-generator.js';
 
 
 
@@ -132,16 +134,6 @@ export const createClient = asyncHandler(async (req, res) => {
 
         await Phone.bulkCreate(phonesToCreate, { transaction });
 
-        await sendEmail({
-            to: newUser.email,
-            subject: 'New Client Account Credentials',
-            html: sendNewClientAccountCredentialsTemplate({
-                name: newUser.name,
-                email: newUser.email,
-                password
-            })
-        });
-
         await createAndSendNotification({
             user_id: newUser.id,
             title: 'Welcome to Angebots',
@@ -151,6 +143,16 @@ export const createClient = asyncHandler(async (req, res) => {
 
 
         await transaction.commit();
+
+        await sendEmail({
+            to: newUser.email,
+            subject: 'New Client Account Credentials',
+            html: sendNewClientAccountCredentialsTemplate({
+                name: newUser.name,
+                email: newUser.email,
+                password
+            })
+        });
 
         res.status(201).json({
             success: true,
@@ -173,6 +175,7 @@ export const updateClient = asyncHandler(async (req, res) => {
     try {
         const userId = req.params.id;
         const { name, email, birthdate, location, phones } = req.body;
+        let emailChanged = false;
 
         const user = await User.findByPk(userId, { transaction });
 
@@ -190,6 +193,7 @@ export const updateClient = asyncHandler(async (req, res) => {
             updateData.birthdate = birthdate;
         }
 
+        let otp = null;
         if (email && email !== user.email) {
             const emailExists = await User.findOne({
                 where: { email },
@@ -202,6 +206,17 @@ export const updateClient = asyncHandler(async (req, res) => {
 
             updateData.email = email;
             updateData.is_verified = false; // Mark as unverified if email changes
+            emailChanged = true;
+
+            // Generate and save OTP
+            otp = generateOTP();
+            await OTP.create({
+                user_id: user.id,
+                email: updateData.email,
+                otp,
+                type: 'email_verification',
+                expires_at: new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
+            }, { transaction });
         }
 
         if (phones && phones.length > 0) {
@@ -224,7 +239,7 @@ export const updateClient = asyncHandler(async (req, res) => {
         }
 
         let locationId = user.location_id;
-        if (location) {
+        if (location && Object.keys(location).length > 0) {
             if (locationId) {
                 await Location.update(location, { where: { id: locationId }, transaction });
             } else {
@@ -237,7 +252,7 @@ export const updateClient = asyncHandler(async (req, res) => {
 
         await user.update(updateData, { transaction });
 
-        if (phones) {
+        if (phones && phones.length > 0) {
             await Phone.destroy({ where: { owner_id: userId, owner_type: 'User' }, transaction });
             const phonesToCreate = phones.map(phone => ({
                 phone,
@@ -245,25 +260,6 @@ export const updateClient = asyncHandler(async (req, res) => {
                 owner_type: 'User'
             }));
             await Phone.bulkCreate(phonesToCreate, { transaction });
-        }
-
-        await sendEmail({
-            to: user.email,
-            subject: 'Profile Updated by Admin',
-            html: updateClientProfileTemplate({
-                name: user.name
-            })
-        });
-
-        if (!user.is_verified) {
-            await sendEmail({
-                to: user.email,
-                subject: 'Email Verification Required',
-                html: generateVerificationEmailTemplate({
-                    name: user.name,
-                    verification_url: `${process.env.FRONTEND_URL}/verify-email?token=${user.verification_token}`
-                })
-            });
         }
 
         await createAndSendNotification({
@@ -274,6 +270,25 @@ export const updateClient = asyncHandler(async (req, res) => {
         }, { transaction });
 
         await transaction.commit();
+
+        if (emailChanged) {
+            await sendEmail({
+                to: updateData.email,
+                subject: 'Verify Your Email',
+                html: generateVerificationEmailTemplate({
+                    name: updateData.name || user.name,
+                    otp
+                })
+            });
+        } else {
+                await sendEmail({
+                to: user.email,
+                subject: 'Profile Updated by Admin',
+                html: updateClientProfileTemplate({
+                    name: user.name
+                })
+            });
+        }
 
         res.status(200).json({
             success: true,
