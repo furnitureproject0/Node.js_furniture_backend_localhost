@@ -1,3 +1,6 @@
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
+
 const NotificationRecipient = sequelize.define('NotificationRecipient', {
 
     id: {
@@ -13,6 +16,7 @@ const NotificationRecipient = sequelize.define('NotificationRecipient', {
             model: 'notifications',
             key: 'id'
         },
+        onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
 
@@ -23,6 +27,7 @@ const NotificationRecipient = sequelize.define('NotificationRecipient', {
             model: 'users',
             key: 'id'
         },
+        onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
 
@@ -44,3 +49,6 @@ const NotificationRecipient = sequelize.define('NotificationRecipient', {
         { fields: ['notification_id'] }
     ]
 });
+
+
+export default NotificationRecipient;

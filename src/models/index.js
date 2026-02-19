@@ -17,6 +17,8 @@ import Transaction from './transaction.js';
 import Location from './location.js';
 import ServiceAddition from './service-addition.js';
 import OrderServiceAddition from './order-service-addition.js';
+import Notification from './notification.js';
+import NotificationRecipient from './notification_recipients.js';
 
 // Company Social Media
 Company.hasMany(CompanySocialMedia, {
@@ -378,6 +380,37 @@ Location.hasMany(OrderService, {
     as: 'toLocationOrders'
 });
 
+// Notification associations
+
+Notification.belongsTo(User, {
+    foreignKey: 'actor_id',
+    as: 'actor'
+});
+
+User.hasMany(Notification, {
+    foreignKey: 'actor_id',
+    as: 'createdNotifications'
+});
+
+Notification.hasMany(NotificationRecipient, {
+    foreignKey: 'notification_id',
+    as: 'recipients'
+});
+
+NotificationRecipient.belongsTo(Notification, {
+    foreignKey: 'notification_id'
+});
+
+NotificationRecipient.belongsTo(User, {
+    foreignKey: 'user_id',
+    as: 'user'
+});
+
+User.hasMany(NotificationRecipient, {
+    foreignKey: 'user_id',
+    as: 'receivedNotifications'
+});
+
 
 export {
     User,
@@ -398,5 +431,7 @@ export {
     Transaction,
     Location,
     ServiceAddition,
-    OrderServiceAddition
+    OrderServiceAddition,
+    Notification,
+    NotificationRecipient
 };

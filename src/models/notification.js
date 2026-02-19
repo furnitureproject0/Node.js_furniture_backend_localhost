@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import User from './user.js';
 
 
 const Notification = sequelize.define('Notification', {
@@ -15,9 +14,11 @@ const Notification = sequelize.define('Notification', {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: User,
+            model: 'users',
             key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     },
 
     title: {
@@ -38,12 +39,11 @@ const Notification = sequelize.define('Notification', {
             'offer', //
             'chat', //
             'employment', //
+            'system', //
             // add more types as needed
             'internal_company',
             'external_company',
             'mother_company',
-            //
-            'system',
             'account',
             'company',
             'security'

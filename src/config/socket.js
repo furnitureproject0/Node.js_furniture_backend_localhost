@@ -17,6 +17,8 @@ const setupSocketIO = (server) => {
         }
     });
 
+    global.io = io;
+
     // Middleware to authenticate socket connections
     io.use(async (socket, next) => {
         try {

@@ -1,10 +1,23 @@
 import { getSocketIO, getUserSocket } from '../config/socket.js';
 import Notification from '../models/notification.js';
+import NotificationRecipient from '../models/notification_recipients.js';
 import User from '../models/user.js';
 
-export const createNotification = async (data, options = {}) => {
+export const createNotification = async ({ recipients = [], ...data}, options = {}) => {
+
+    const transaction = options.transaction;
+
     try {
-        const notification = await Notification.create(data, options);
+        const notification = await Notification.create(data, { transaction });
+
+        if (recipients.length > 0) {
+            const recipientRecords = recipients.map(userId => ({
+                notification_id: notification.id,
+                user_id: userId
+            }));
+            await NotificationRecipient.bulkCreate(recipientRecords, { transaction });
+        }
+
         return notification;
     } catch (error) {
         console.error('Failed to create notification:', error);
@@ -15,25 +28,38 @@ export const createNotification = async (data, options = {}) => {
 
 export const sendNotification = async (notification) => {
     try {
-        // Get user's socket if they're connected
-        const socket = getUserSocket(notification.user_id);
 
-        if (socket) {
-            socket.emit('notification', notification);
-            return true;
+        const recipients = await NotificationRecipient.findAll({
+            where: { notification_id: notification.id },
+        });
+
+        let sentCount = 0;
+        for (const recipient of recipients) {
+            const socket = getUserSocket(recipient.user_id);
+            if (socket) {
+                socket.emit('notification', notification);
+                sentCount++;
+            }
         }
-        return false;
+        // // Get user's socket if they're connected
+        // const socket = getUserSocket(notification.user_id);
+
+        // if (socket) {
+        //     socket.emit('notification', notification);
+        //     return true;
+        // }
+        return sentCount > 0;
     } catch (error) {
         console.error('Failed to send notification:', error);
-        return false;
+        return 0;
     }
 };
 
 
 export const createAndSendNotification = async (data, options = {}) => {
     const notification = await createNotification(data, options);
-    const sent = await sendNotification(notification);
-    return { notification, sent };
+    const sentCount = await sendNotification(notification);
+    return { notification, sent: sentCount > 0 };
 };
 
 
@@ -62,7 +88,7 @@ export const notifyCompanyAdminAssigned = async ({ companyId, orderId, orderServ
         };
 
         if (companyAdmin) {
-            return await createAndSendNotification({ ...baseData, user_id: companyAdmin.id });
+            return await createAndSendNotification({ ...baseData, recipients: [companyAdmin.id] });
         }
 
     } catch (error) {
@@ -74,11 +100,12 @@ export const notifyCompanyAdminAssigned = async ({ companyId, orderId, orderServ
 
 export const markNotificationAsRead = async (notificationId, userId) => {
     try {
-        const [updated] = await Notification.update(
-            { is_read: true },
+        const [updated] = await NotificationRecipient.update(
+            // { is_read: true }, // --- IGNORE ---
+            { read_at: new Date() },
             {
                 where: {
-                    id: notificationId,
+                    notification_id: notificationId,
                     user_id: userId
                 }
             }
@@ -94,10 +121,14 @@ export const markNotificationAsRead = async (notificationId, userId) => {
 export const getUnreadNotifications = async (userId, limit = 10) => {
     try {
         const notifications = await Notification.findAll({
-            where: {
-                user_id: userId,
-                is_read: false
-            },
+            include: [{
+                model: NotificationRecipient,
+                as: 'recipients',
+                where: {
+                    user_id: userId,
+                    read_at: null
+                }
+            }],
             order: [['created_at', 'DESC']],
             limit
         });
@@ -122,11 +153,12 @@ export const notifyClientOfferCancelled = async ({ clientId, offerId, orderId, o
         };
 
         const notificationData = {
-            user_id: clientId,
+            //     user_id: clientId,
             title: 'Offer Cancelled',
             message: `The offer for service "${serviceName}" has been cancelled by the company.`,
             type: 'offer',
-            payload
+            payload,
+            recipients: [clientId]
         };
 
         return await createAndSendNotification(notificationData);
@@ -162,11 +194,12 @@ export const notifyCompanyAdminOfferAccepted = async ({ companyId, offerId, orde
         };
 
         const notificationData = {
-            user_id: companyAdmin.id,
+            // user_id: companyAdmin.id,
             title: 'Offer Accepted',
             message: `Your offer for service "${serviceName}" has been accepted by the client.`,
             type: 'offer',
-            payload
+            payload,
+            recipients: [companyAdmin.id]
         };
 
         return await createAndSendNotification(notificationData);
@@ -202,11 +235,12 @@ export const notifyCompanyAdminOfferRejected = async ({ companyId, offerId, orde
         };
 
         const notificationData = {
-            user_id: companyAdmin.id,
+            // user_id: companyAdmin.id,
             title: 'Offer Rejected',
             message: `Your offer for service "${serviceName}" has been rejected by the client.`,
             type: 'offer',
-            payload
+            payload,
+            recipients: [companyAdmin.id]
         };
 
         return await createAndSendNotification(notificationData);
