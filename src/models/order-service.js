@@ -24,7 +24,7 @@ const OrderService = sequelize.define('OrderService', {
             key: 'id'
         }
     },
-    to_location_id: {
+    primary_location_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -32,13 +32,21 @@ const OrderService = sequelize.define('OrderService', {
             key: 'id'
         }
     },
-    from_location_id: {
+    secondary_location_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'locations',
             key: 'id'
         }
+    },
+    preferred_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    preferred_time: {
+        type: DataTypes.TIME,
+        allowNull: false
     },
     pricing_type: {
         type: DataTypes.ENUM('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom'),
@@ -60,6 +68,11 @@ const OrderService = sequelize.define('OrderService', {
     minimum_charge: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
+        defaultValue: 0
+    },
+    discount_applied: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
         defaultValue: 0
     },
     company_id: {

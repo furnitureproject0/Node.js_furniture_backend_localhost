@@ -43,10 +43,11 @@ const Addition = sequelize.define('Addition', {
         allowNull: true,
         defaultValue: 0
     },
-    details: {
+    requirements: {
         type: DataTypes.JSON,
         allowNull: true,
-        defaultValue: {}
+        defaultValue: {},
+        comment: 'What extra info is needed if the user selects this addition?'
     },
     is_active: {
         type: DataTypes.BOOLEAN,

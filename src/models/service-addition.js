@@ -9,7 +9,7 @@ const ServiceAddition = sequelize.define('ServiceAddition', {
         primaryKey: true,
         autoIncrement: true
     },
-    serviceId: {
+    service_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -17,7 +17,7 @@ const ServiceAddition = sequelize.define('ServiceAddition', {
             key: 'id'
         }
     },
-    additionId: {
+    addition_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

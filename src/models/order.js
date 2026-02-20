@@ -17,39 +17,15 @@ const Order = sequelize.define('Order', {
             key: 'id'
         }
     },
-    // location_id: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: false,
-    //     references: {
-    //         model: Location,
-    //         key: 'id'
-    //     }
-    // },
-    // destination_location_id: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: true,
-    //     references: {
-    //         model: Location,
-    //         key: 'id'
-    //     }
-    // },
-    // preferred_date: {
-    //     type: DataTypes.DATEONLY,
-    //     allowNull: false
-    // },
-    // preferred_time: {
-    //     type: DataTypes.TIME,
-    //     allowNull: false
-    // },
-    // number_of_rooms: {
-    //     type: DataTypes.FLOAT,
-    //     allowNull: true
-    // },
-    // rooms: {
-    //     type: DataTypes.JSON,
-    //     allowNull: true,
-    //     defaultValue: []
-    // },
+    execution_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        comment: 'Preferred date for this specific service'
+    },
+    execution_time: {
+        type: DataTypes.TIME,
+        allowNull: true
+    },
     images: {
         type: DataTypes.JSON,
         allowNull: true,

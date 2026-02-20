@@ -48,19 +48,19 @@ const OrderServiceAddition = sequelize.define('OrderServiceAddition', {
         allowNull: false,
         defaultValue: 0
     },
-    details: {
-        type: DataTypes.JSON,
+    discount_applied: {
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
-        defaultValue: {}
-    },
-    details: {
-        type: DataTypes.JSON,
-        allowNull: true,
-        defaultValue: {}
+        defaultValue: 0
     },
     total_price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true
+    },
+    details: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: {}
     },
     note: {
         type: DataTypes.STRING,
