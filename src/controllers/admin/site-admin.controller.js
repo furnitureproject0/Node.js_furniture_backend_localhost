@@ -1,13 +1,12 @@
 import asyncHandler from 'express-async-handler';
-import { User, Location, Phone } from '../../models/index.js';
+import { User, Location, Phone, Notification, NotificationRecipient } from '../../models/index.js';
 import OTP from '../../models/otp.js';
-import Notification from '../../models/notification.js';
 import AppError from '../../utils/AppError.js';
 import { Op } from 'sequelize';
 import sequelize from '../../config/database.js';
 import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate, accountDeletedByAdminTemplate } from '../../utils/emailTemplates.js';
 import sendEmail from '../../utils/sendEmail.js';
-import { createAndSendNotification } from '../../utils/notifications.js';
+import { createNotification, sendNotification, createAndSendNotification } from '../../utils/notifications.js';
 import { generateOTP } from '../../utils/genarators/otp-generator.js';
 
 
@@ -135,15 +134,19 @@ export const createClient = asyncHandler(async (req, res) => {
 
         await Phone.bulkCreate(phonesToCreate, { transaction });
 
-        await createAndSendNotification({
-            user_id: newUser.id,
+        const notification = await createNotification({
+            // user_id: newUser.id,
             title: 'Welcome to Angebots',
             message: `Hi ${newUser.name}, thank you for joining Angebots! Please verify your email to get started.`,
             type: 'welcome',
+            actor_id: req.user.id,
+            recipients: [newUser.id]
         }, { transaction });
 
 
         await transaction.commit();
+
+        await sendNotification(notification);
 
         await sendEmail({
             to: newUser.email,
@@ -263,14 +266,18 @@ export const updateClient = asyncHandler(async (req, res) => {
             await Phone.bulkCreate(phonesToCreate, { transaction });
         }
 
-        await createAndSendNotification({
-            user_id: user.id,
+        const notification = await createNotification({
+            // user_id: user.id,
             title: 'Profile Updated',
-            message: `Hi ${user.name}, your profile has been updated by an administrator.`,
+            message: `Hi ${ updateData.name || user.name }, your profile has been updated by an administrator.`,
             type: 'update', 
+            actor_id: req.user.id,
+            recipients: [user.id]
         }, { transaction });
 
         await transaction.commit();
+
+        await sendNotification(notification);
 
         if (emailChanged) {
             await sendEmail({
@@ -334,8 +341,18 @@ export const deleteClient = asyncHandler(async (req, res) => {
             });
         }
 
-        await Notification.destroy({
+        await NotificationRecipient.destroy({
             where: { user_id: userId },
+            transaction
+        });
+
+        await Notification.destroy({
+            where: {
+                id: sequelize.literal(`NOT EXISTS (
+                    SELECT 1 FROM notification_recipients 
+                    WHERE notification_recipients.notification_id = notifications.id
+                )`)
+            },
             transaction
         });
 
@@ -346,14 +363,18 @@ export const deleteClient = asyncHandler(async (req, res) => {
 
         await user.destroy({ transaction });
 
-        await createAndSendNotification({
-            user_id: req.user.id,
+        const notification = await createNotification({
+            // user_id: req.user.id,
             title: 'Account Deleted',
             message: `Hi ${user.name}, your account has been deleted by an administrator.`,
-            type: 'account_deleted',
+            type: 'account',
+            actor_id: req.user.id,
+            recipients: [req.user.id]
         }, { transaction });
 
         await transaction.commit();
+
+        await sendNotification(notification);
 
         await sendEmail({
             to: user.email,

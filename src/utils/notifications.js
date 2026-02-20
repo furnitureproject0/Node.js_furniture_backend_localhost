@@ -18,7 +18,7 @@ export const createNotification = async ({ recipients = [], ...data}, options = 
             await NotificationRecipient.bulkCreate(recipientRecords, { transaction });
         }
 
-        return notification;
+        return notification.toJSON();
     } catch (error) {
         console.error('Failed to create notification:', error);
         throw error;
@@ -27,11 +27,14 @@ export const createNotification = async ({ recipients = [], ...data}, options = 
 
 
 export const sendNotification = async (notification) => {
+    console.log('-------------------------------------------------------------------------------------------');
+    console.log(notification);
     try {
 
         const recipients = await NotificationRecipient.findAll({
             where: { notification_id: notification.id },
         });
+
 
         let sentCount = 0;
         for (const recipient of recipients) {
@@ -48,6 +51,7 @@ export const sendNotification = async (notification) => {
         //     socket.emit('notification', notification);
         //     return true;
         // }
+        console.log(`//////////////Total recipients: ${recipients.length}, Notifications sent: ${sentCount}`);
         return sentCount > 0;
     } catch (error) {
         console.error('Failed to send notification:', error);
