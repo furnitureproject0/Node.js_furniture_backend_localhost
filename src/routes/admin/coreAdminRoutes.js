@@ -3,7 +3,7 @@ import express from 'express';
 import { searchClientsSchema } from '../../validation/site.company.admin-schema.js';
 import { userBaseSchema, updateUserSchema } from '../../validation/user-schema.js';
 import validate from '../../middleware/validatin-mw.js';
-import { searchClients, createClient, updateClient, deleteClient } from '../../controllers/admin/coreAdminController.js';
+import { searchClients, createClient, updateClient, deleteClient } from '../../controllers/coreAdminController.js';
 
 const router = express.Router();
 

@@ -1,13 +1,13 @@
 import asyncHandler from 'express-async-handler';
-import { User, Location, Phone, Notification, NotificationRecipient } from '../../models/index.js';
-import OTP from '../../models/otp.js';
-import AppError from '../../utils/AppError.js';
+import { User, Location, Phone, Notification, NotificationRecipient } from '../models/index.js';
+import OTP from '../models/otp.js';
+import AppError from '../utils/AppError.js';
 import { Op } from 'sequelize';
-import sequelize from '../../config/database.js';
-import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate, accountDeletedByAdminTemplate } from '../../utils/emailTemplates.js';
-import sendEmail from '../../utils/sendEmail.js';
-import { createNotification, sendNotification, createAndSendNotification } from '../../utils/notifications.js';
-import { generateOTP } from '../../utils/genarators/otp-generator.js';
+import sequelize from '../config/database.js';
+import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, generateVerificationEmailTemplate, accountDeletedByAdminTemplate } from '../utils/emailTemplates.js';
+import sendEmail from '../utils/sendEmail.js';
+import { createNotification, sendNotification, createAndSendNotification } from '../utils/notifications.js';
+import { generateOTP } from '../utils/genarators/otp-generator.js';
 
 
 
