@@ -1,16 +1,16 @@
 'use strict';
 
 // services/vehicleService.js
-import Vehicle from '../models/Vehicle.js';
-import AppError from '../utils/AppError.js'; // لو عندك middleware للأخطاء
+import Vehicle from '../../models/vehicle.js';
+import AppError from '../../utils/AppError.js';
 
 /**
  * Add a new vehicle
  * @param {Object} data - Vehicle data from request body
  * @returns {Object} Created vehicle
  */
-async function addVehicle(data) {
-    // تحقق من بعض البيانات الأساسية
+export const addVehicle = async (data) => {
+
     if (!data.name) {
         throw new AppError('Vehicle name is required', 400);
     }
@@ -19,7 +19,6 @@ async function addVehicle(data) {
         throw new AppError('License plate is required', 400);
     }
 
-    // تحقق لو الرقم موجود بالفعل
     const existingVehicle = await Vehicle.findOne({
         where: { license_plate: data.license_plate }
     });
@@ -27,8 +26,6 @@ async function addVehicle(data) {
         throw new AppError('License plate already exists', 409);
     }
 
-    // يمكن هنا تضيف أي logic إضافي حسب الـ business
-    // مثال: تعديل default values أو تحويل البيانات
     const vehicleData = {
         name: data.name,
         type: data.type || 'truck',
@@ -47,9 +44,6 @@ async function addVehicle(data) {
         notes: data.notes || null,
     };
 
-    // إنشاء المركبة
     const vehicle = await Vehicle.create(vehicleData);
     return vehicle;
 }
-
-export default { addVehicle };
