@@ -9,7 +9,7 @@ const Vehicle = sequelize.define('Vehicle', {
     },
     company_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true, // Null until assigned to a company
         references: {
             model: 'companies',
             key: 'id'
