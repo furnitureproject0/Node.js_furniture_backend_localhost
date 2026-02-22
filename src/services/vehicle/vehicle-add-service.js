@@ -1,7 +1,7 @@
 'use strict';
 
 // services/vehicleService.js
-import Vehicle from '../../models/vehicle.js';
+import { Vehicle, Company } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
 
 /**
@@ -28,6 +28,15 @@ export const addVehicle = async (data, options = {}) => {
     });
     if (existingVehicle) {
         throw new AppError('License plate already exists', 409);
+    }
+
+    if (data.company_id) {
+        const companyExists = await Company.findByPk(data.company_id, {
+            ...(transaction && { transaction }),
+        });
+        if (!companyExists) {
+            throw new AppError('Company not found', 404);
+        }
     }
 
     const vehicleData = {
