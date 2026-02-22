@@ -32,7 +32,9 @@ export const updateVehicle = async (id, data, options = {}) => {
     }
 
     if (data.company_id) {
-        const companyExists = await Company.findByPk(data.company_id);
+        const companyExists = await Company.findByPk(data.company_id, {
+            ...(transaction && { transaction }),
+        });
         if (!companyExists) {
             throw new AppError('Company not found', 404);
         }
