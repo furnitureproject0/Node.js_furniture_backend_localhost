@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, authorize } from '../../middleware/auth.js';
-import siteAdminRoutes from './site-adminRoutes.js';
+import siteAdminRoutes from './coreAdminRoutes.js';
 
 const router = express.Router();
 

@@ -12,6 +12,5 @@ router.post('/add-client', validate(userBaseSchema), createClient);
 router.patch('/update-client/:id', validate(updateUserSchema), updateClient);
 router.delete('/delete-client/:id', deleteClient);
 
-router.get('/test)', );
 
 export default router;

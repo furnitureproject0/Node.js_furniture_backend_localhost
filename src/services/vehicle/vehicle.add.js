@@ -9,7 +9,9 @@ import AppError from '../../utils/AppError.js';
  * @param {Object} data - Vehicle data from request body
  * @returns {Object} Created vehicle
  */
-export const addVehicle = async (data) => {
+export const addVehicle = async (data, options = {}) => {
+
+    const { transaction } = options;
 
     if (!data.name) {
         throw new AppError('Vehicle name is required', 400);
@@ -20,7 +22,8 @@ export const addVehicle = async (data) => {
     }
 
     const existingVehicle = await Vehicle.findOne({
-        where: { license_plate: data.license_plate }
+        where: { license_plate: data.license_plate },
+        ...(transaction && { transaction }),
     });
     if (existingVehicle) {
         throw new AppError('License plate already exists', 409);
@@ -44,6 +47,9 @@ export const addVehicle = async (data) => {
         notes: data.notes || null,
     };
 
-    const vehicle = await Vehicle.create(vehicleData);
-    return vehicle;
+    const vehicle = await Vehicle.create(vehicleData, {
+        ...(transaction && { transaction })
+    });
+    
+    return vehicle.toJSON();
 }

@@ -1,3 +1,5 @@
+'use strict';
+
 import asyncHandler from 'express-async-handler';
 import { User, Location, Phone, Notification, NotificationRecipient } from '../models/index.js';
 import OTP from '../models/otp.js';
