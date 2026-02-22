@@ -19,6 +19,7 @@ import ServiceAddition from './service-addition.js';
 import OrderServiceAddition from './order-service-addition.js';
 import Notification from './notification.js';
 import NotificationRecipient from './notification_recipients.js';
+import Vehicle from './vehicle.js';
 
 // Company Social Media
 Company.hasMany(CompanySocialMedia, {
@@ -411,6 +412,17 @@ User.hasMany(NotificationRecipient, {
     as: 'receivedNotifications'
 });
 
+// Vehicle associations
+Vehicle.belongsTo(Company, {
+    foreignKey: 'company_id',
+    as: 'company'
+});
+
+Company.hasMany(Vehicle, {
+    foreignKey: 'company_id',
+    as: 'vehicles'
+});
+
 
 export {
     User,
@@ -433,5 +445,6 @@ export {
     ServiceAddition,
     OrderServiceAddition,
     Notification,
-    NotificationRecipient
+    NotificationRecipient,
+    Vehicle
 };

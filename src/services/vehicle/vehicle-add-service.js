@@ -7,6 +7,7 @@ import AppError from '../../utils/AppError.js';
 /**
  * Add a new vehicle
  * @param {Object} data - Vehicle data from request body
+ * @param {Object} options - Additional options (e.g., transaction)
  * @returns {Object} Created vehicle
  */
 export const addVehicle = async (data, options = {}) => {
