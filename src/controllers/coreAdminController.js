@@ -28,7 +28,7 @@ export const searchClients = asyncHandler(async (req, res) => {
         role: 'client',
     };
 
-    if (search) {
+    if (search && search.trim() !== '') {
         whereClause[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
             { email: { [Op.like]: `%${search}%` } },
@@ -65,9 +65,9 @@ export const searchClients = asyncHandler(async (req, res) => {
         order: [['createdAt', 'DESC']],
     });
 
-    if (!clients.length) {
-        throw new AppError('No clients found matching the search criteria', 404);
-    }
+    // if (!clients.length) {
+    //     throw new AppError('No clients found matching the search criteria', 404);
+    // }
 
     res.status(200).json({
         success: true,

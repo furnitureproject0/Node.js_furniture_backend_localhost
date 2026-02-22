@@ -22,14 +22,16 @@ export const getSearchedVehicles = async (search, pagination = {}, options = {})
     const offset = (pageNumber - 1) * limitNumber;
 
     // Build where clause for all fields
-    const whereClause = {
-        [Op.or]: [
+    const whereClause = {};
+
+    if (search && search.trim() !== '') {
+        whereClause[Op.or] = [
             { name: { [Op.like]: `%${search}%` } },
             { model: { [Op.like]: `%${search}%` } },
             { license_plate: { [Op.like]: `%${search}%` } },
             { '$company.name$': { [Op.like]: `%${search}%` } },
-        ]
-    };
+        ];
+    }
 
     const vehicles = await Vehicle.findAndCountAll({
         where: whereClause,
