@@ -4,7 +4,7 @@ import express from 'express';
 import { protect, authorize } from '../middleware/auth.js';
 import validate from '../middleware/validatin-mw.js';
 import { createVehicleSchema } from '../validation/vehicle.schema.js';
-import { createVehicle } from '../controllers/vehicleController.js';
+import { createVehicle } from '../controllers/vehicle-controller.js';
 
 const router = express.Router();
 

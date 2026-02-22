@@ -32,7 +32,7 @@ import './config/passport.js';
 
 //
 import admin from './routes/admin/index.js';
-import vehicle from './routes/vehicleRoutes.js';
+import vehicle from './routes/vehicle-routes.js';
 //
 
 

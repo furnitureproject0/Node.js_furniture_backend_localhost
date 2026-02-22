@@ -1,1 +1,1 @@
-export * from './vehicle.add.js';
+export * from './vehicle-add-service.js';
