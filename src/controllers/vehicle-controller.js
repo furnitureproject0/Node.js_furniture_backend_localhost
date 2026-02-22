@@ -2,7 +2,7 @@
 
 import asyncHandler from 'express-async-handler';
 import AppError from '../utils/AppError.js';
-import { addVehicle, updateVehicle, deleteVehicle } from '../services/vehicle/index.js';
+import { addVehicle, updateVehicle, deleteVehicle, getSearchedVehicles } from '../services/vehicle/index.js';
 
 export const createVehicle = asyncHandler(async (req, res) => {
     try {
@@ -48,5 +48,23 @@ export const removeVehicle = asyncHandler(async (req, res) => {
         });
     } catch (error) {
         throw new AppError(error.message || 'Failed to delete vehicle', error.statusCode || 500);
+    }
+});
+
+export const searchVehicles = asyncHandler(async (req, res) => {
+    const { search } = req.query || '';
+    const pagination = {
+        page: req.query.page || 1,
+        limit: req.query.limit || 10
+    };
+    try {
+        const result = await getSearchedVehicles(search, pagination);
+        res.status(200).json({
+            success: true,
+            message: 'Vehicles searched successfully',
+            data: result
+        });
+    } catch (error) {
+        throw new AppError(error.message || 'Failed to search vehicles', error.statusCode || 500);
     }
 });
