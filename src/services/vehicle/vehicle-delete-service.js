@@ -1,7 +1,7 @@
 'use strict';
 
 // services/vehicleService.js
-import { Vehicle, Company } from '../../models/index.js';
+import { Vehicle } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
 
 /**
