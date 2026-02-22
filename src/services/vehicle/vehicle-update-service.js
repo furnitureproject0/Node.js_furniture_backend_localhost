@@ -6,6 +6,7 @@ import AppError from '../../utils/AppError.js';
 
 /**
  * Update an existing vehicle
+ * @param {string} id - Vehicle ID
  * @param {Object} data - Vehicle data from request body
  * @param {Object} options - Additional options (e.g., transaction)
  * @returns {Object} Updated vehicle
