@@ -1,7 +1,7 @@
 'use strict';
 
 import { Service } from '../../models/index.js';
-import AppError from '../../utils/AppError.js';
+import { Op } from 'sequelize';
 
 /**
  * Get all services with pagination and optional filtering
@@ -11,7 +11,7 @@ import AppError from '../../utils/AppError.js';
  * @param {Object} options - Additional options (e.g., transaction)
  * @returns {Object} filtered services list and pagination info
  */
-export const getAllServices = async (filters, pagination = {}, user, options = {}) => {
+export const getAllServices = async (filters, search = '', pagination = {}, user, options = {}) => {
 
     const { transaction } = options;
 
@@ -32,6 +32,13 @@ export const getAllServices = async (filters, pagination = {}, user, options = {
     if (!authRoles.includes(user.role)) {
         whereConditions.is_active = true;
         whereConditions.is_deleted = false;
+    }
+
+    if (search && search.trim() !== '') {
+        whereConditions[Op.or] = [
+            { name: { [Op.like]: `%${search}%` } },
+            { description: { [Op.like]: `%${search}%` } },
+        ];
     }
 
     const pageNumber = parseInt(pagination.page) || 1;

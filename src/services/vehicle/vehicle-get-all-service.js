@@ -2,6 +2,7 @@
 
 // services/vehicleService.js
 import { Vehicle } from '../../models/index.js';
+import { Op } from 'sequelize';
 import AppError from '../../utils/AppError.js';
 
 /**
@@ -12,7 +13,7 @@ import AppError from '../../utils/AppError.js';
  * @param {Object} options - Additional options (e.g., transaction)
  * @returns {Object} List of vehicles and pagination info
  */
-export const getAllVehicles = async (filters = {}, pagination = {}, user, options = {}) => {
+export const getAllVehicles = async (filters = {}, search = '', pagination = {}, user, options = {}) => {
 
     const { transaction } = options;
 
@@ -23,6 +24,15 @@ export const getAllVehicles = async (filters = {}, pagination = {}, user, option
             whereConditions[key] = filters[key];
         }
     });
+
+    if (search && search.trim() !== '') {
+        whereConditions[Op.or] = [
+            { name: { [Op.like]: `%${search}%` } },
+            { model: { [Op.like]: `%${search}%` } },
+            { license_plate: { [Op.like]: `%${search}%` } },
+            { '$company.name$': { [Op.like]: `%${search}%` } },
+        ];
+    }
 
     // Authorization
     // if (user.role === 'company_admin') {
