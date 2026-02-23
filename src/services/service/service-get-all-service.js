@@ -19,7 +19,7 @@ export const getAllServices = async (filters, pagination = {}, user, options = {
         is_deleted: false
     };
 
-    const allowedFilters = ['name', 'is_active'];
+    const allowedFilters = ['name', 'is_active', 'is_deleted', 'company_id'];
 
     Object.keys(filters).forEach(key => {
         if (allowedFilters.includes(key) && filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
@@ -31,6 +31,7 @@ export const getAllServices = async (filters, pagination = {}, user, options = {
 
     if (!authRoles.includes(user.role)) {
         whereConditions.is_active = true;
+        whereConditions.is_deleted = false;
     }
 
     const pageNumber = parseInt(pagination.page) || 1;
