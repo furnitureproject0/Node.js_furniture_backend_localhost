@@ -15,9 +15,11 @@ export const getAllServices = async (filters, pagination = {}, user, options = {
 
     const { transaction } = options;
 
-    const whereConditions = {};
+    const whereConditions = {
+        is_deleted: false
+    };
 
-    const allowedFilters = ['name', 'is_active', 'is_deleted'];
+    const allowedFilters = ['name', 'is_active'];
 
     Object.keys(filters).forEach(key => {
         if (allowedFilters.includes(key) && filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
