@@ -1,7 +1,8 @@
 'use strict';
 
-import { Service } from '../../models/index.js';
+import { Service, ServiceAddition, Addition } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
+import { validateAdditions } from './helper-validate-addition.js';
 
 /**
  * Create a new service
@@ -29,6 +30,10 @@ export const createService = async (data, options = {}) => {
         throw new AppError('Service requirements are required', 400);
     }
 
+    if (data.additions && Array.isArray(data.additions) && data.additions.length > 0) {
+        await validateAdditions(data.additions, { transaction });
+    }
+
     const serviceData = {
         name: data.name,
         description: data.description || null,
@@ -43,6 +48,25 @@ export const createService = async (data, options = {}) => {
     }
 
     const service = await Service.create(serviceData, { 
+        ...(transaction && { transaction })
+    });
+
+    if (data.additions && Array.isArray(data.additions) && data.additions.length > 0) {
+        const serviceAdditions = data.additions.map((additionId) => ({
+            service_id: service.id,
+            addition_id: additionId
+        }));
+        await ServiceAddition.bulkCreate(serviceAdditions, {
+            ...(transaction && { transaction })
+        });
+    }
+
+    await service.reload({
+        include: [{
+            model: Addition,
+            as: 'additions',
+            through: { attributes: [] }
+        }],
         ...(transaction && { transaction })
     });
 

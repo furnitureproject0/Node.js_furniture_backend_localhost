@@ -1,6 +1,6 @@
 'use strict';
 
-import { Service } from '../../models/index.js';
+import { Service, Addition } from '../../models/index.js';
 import { Op } from 'sequelize';
 
 /**
@@ -47,6 +47,15 @@ export const getAllServices = async (filters, search = '', pagination = {}, user
 
     const services = await Service.findAndCountAll({
         where: whereConditions,
+        include: [{
+            model: Addition,
+            as: 'additions',
+            where: { 
+                is_deleted: false,
+                is_active: true
+            },
+            through: { attributes: [] }
+        }],
         limit: limitNumber,
         offset: offset,
         order: [['createdAt', 'DESC']],
