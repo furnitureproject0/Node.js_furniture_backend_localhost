@@ -17,7 +17,7 @@ export const getAllServices = async (filters, pagination = {}, user, options = {
 
     const whereConditions = {};
 
-    const allowedFilters = ['name', 'is_active'];
+    const allowedFilters = ['name', 'is_active', 'is_deleted'];
 
     Object.keys(filters).forEach(key => {
         if (allowedFilters.includes(key) && filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
