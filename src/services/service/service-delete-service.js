@@ -1,6 +1,6 @@
 'use strict';
 
-import { Service } from '../../models/index.js';
+import { Service, ServiceAddition } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
 
 /**
@@ -21,6 +21,11 @@ export const deleteService = async (id, options = {}) => {
     }
 
     await service.destroy({
+        ...(transaction && { transaction }),
+    });
+
+    await ServiceAddition.destroy({
+        where: { service_id: id },
         ...(transaction && { transaction }),
     });
 

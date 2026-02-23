@@ -28,5 +28,18 @@ export const retrieveTrashedService = async (id, options = {}) => {
         ...(transaction && { transaction }),
     });
 
+    await service.reload({
+        include: [{
+            model: Addition,
+            as: 'additions',
+            where: {
+                is_deleted: false,
+                is_active: true
+            },
+            through: { attributes: [] }
+        }],
+        ...(transaction && { transaction })
+    });
+
     return service.toJSON();
 }

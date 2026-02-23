@@ -1,7 +1,8 @@
 'use strict';
 
-import { Service } from '../../models/index.js';
+import { Addition, Service, ServiceAddition } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
+import { validateAdditions } from './helper-validate-addition.js';
 
 /**
  * Update an existing service
@@ -31,6 +32,10 @@ export const updateService = async (id, data, options = {}) => {
         }
     }
 
+    if (data.additions && Array.isArray(data.additions) && data.additions.length > 0) {
+        await validateAdditions(data.additions, { transaction });
+    }
+
     const allowedFields = [
         'name', 
         'description', 
@@ -53,6 +58,29 @@ export const updateService = async (id, data, options = {}) => {
     });
 
     await service.update(updateData, {
+        ...(transaction && { transaction })
+    });
+
+    if (data.additions && Array.isArray(data.additions) && data.additions.length > 0) {
+        await ServiceAddition.destroy({
+            where: { service_id: id },
+            ...(transaction && { transaction })
+        });
+        const serviceAdditions = data.additions.map((additionId) => ({
+            service_id: id,
+            addition_id: additionId
+        }));
+        await ServiceAddition.bulkCreate(serviceAdditions, {
+            ...(transaction && { transaction })
+        });
+    }
+
+    await service.reload({
+        include: [{
+            model: Addition,
+            as: 'additions',
+            through: { attributes: [] }
+        }],
         ...(transaction && { transaction })
     });
     
