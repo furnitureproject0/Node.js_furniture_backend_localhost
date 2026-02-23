@@ -53,7 +53,8 @@ export const getSearchedVehicles = async (search, pagination = {}, options = {})
         pagination: {
             page: pageNumber,
             limit: limitNumber,
-            total: vehicles.count
+            totalPages: Math.ceil(vehicles.count / limitNumber),
+            totalItems: vehicles.count
         }
     };
 };

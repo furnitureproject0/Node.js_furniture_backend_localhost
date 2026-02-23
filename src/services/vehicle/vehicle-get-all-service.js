@@ -58,7 +58,8 @@ export const getAllVehicles = async (filters = {}, pagination = {}, user, option
         pagination: {
             page: pageNumber,
             limit: limitNumber,
-            total: vehicles.count
+            totalPages: Math.ceil(vehicles.count / limitNumber),
+            totalItems: vehicles.count
         }
     };
 }
