@@ -1,6 +1,6 @@
 'use strict';
 
-import { Addition } from "../../models/index";
+import { Addition } from "../../models/index.js";
 import AppError from '../../utils/AppError.js';
 
 /**

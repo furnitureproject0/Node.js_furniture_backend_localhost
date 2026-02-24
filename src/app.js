@@ -33,6 +33,7 @@ import './config/passport.js';
 //
 import admin from './routes/admin/index.js';
 import vehicle from './routes/vehicle-routes.js';
+import addition from './routes/addition-routes.js';
 //
 
 
@@ -55,7 +56,7 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/companies', companyRoutes);
-app.use('/api/additions', additionRoutes);
+// app.use('/api/additions', additionRoutes);
 app.use('/api/offers', offerRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/orders', orderRoutes);
@@ -66,6 +67,7 @@ app.use('/api/seed', seedRoutes);
 // new routes
 app.use('/api/admin', admin);
 app.use('/api/vehicles', vehicle);
+app.use('/api/additions', addition);
 
 // Test mail endpoint
 app.get('/api/testmail', testMail);
