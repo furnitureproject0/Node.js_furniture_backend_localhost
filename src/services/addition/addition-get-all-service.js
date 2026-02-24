@@ -1,22 +1,25 @@
 'use strict';
 
-import { Service, Addition } from '../../models/index.js';
+import { Addition } from "../../models/index.js";
+import AppError from '../../utils/AppError.js';
 import { Op } from 'sequelize';
 
 /**
- * Get all services with pagination and optional filtering
- * @param {Object} filters - Service data from request body
- * @param {Object} pagination - Pagination options (e.g., page, limit)
- * @param {Object} user - User object (for authorization checks)
+ * Get all active and non-deleted additions
+ * @param {Object} filters - Filters for querying additions (currently unused)
+ * @param {string} search - Search term for filtering additions by name (currently unused)
+ * @param {Object} pagination - Pagination options (currently unused)
+ * @param {Object} user - User info for permission checks (currently unused)
  * @param {Object} options - Additional options (e.g., transaction)
- * @returns {Object} filtered services list and pagination info
+ * @returns {Array} List of additions
  */
-export const getAllServices = async (filters, search = '', pagination = {}, user, options = {}) => {
+export const getAllAdditions = async (filters, search = '', pagination = {}, user, options = {}) => {
 
     const { transaction } = options;
 
     const whereConditions = {
-        is_deleted: false
+        is_deleted: false,
+        is_active: true
     };
 
     const allowedFilters = ['name', 'is_active', 'is_deleted'];
@@ -27,10 +30,9 @@ export const getAllServices = async (filters, search = '', pagination = {}, user
         }
     });
 
-    const authRoles = ['super_admin', 'site_admin', 'company_admin'];
+    const authRoles = ['super_admin'];
 
     if (!authRoles.includes(user.role)) {
-        whereConditions.is_active = true;
         whereConditions.is_deleted = false;
     }
 
@@ -45,17 +47,8 @@ export const getAllServices = async (filters, search = '', pagination = {}, user
     const limitNumber = parseInt(pagination.limit) || 10;
     const offset = (pageNumber - 1) * limitNumber;
 
-    const services = await Service.findAndCountAll({
+    const additions = await Addition.findAndCountAll({
         where: whereConditions,
-        include: [{
-            model: Addition,
-            as: 'additions',
-            where: { 
-                is_deleted: false,
-                is_active: true
-            },
-            through: { attributes: [] }
-        }],
         limit: limitNumber,
         offset: offset,
         order: [['createdAt', 'DESC']],
@@ -64,12 +57,12 @@ export const getAllServices = async (filters, search = '', pagination = {}, user
     });
 
     return {
-        services: services.rows,
+        additions: additions.rows,
         pagination: {
             page: pageNumber,
             limit: limitNumber,
-            totalPages: Math.ceil(services.count / limitNumber),
-            totalItems: services.count
+            totalPages: Math.ceil(additions.count / limitNumber),
+            totalItems: additions.count
         }
     };
-};
+}
