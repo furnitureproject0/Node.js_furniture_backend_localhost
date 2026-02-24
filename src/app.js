@@ -34,6 +34,7 @@ import './config/passport.js';
 import admin from './routes/admin/index.js';
 import vehicle from './routes/vehicle-routes.js';
 import addition from './routes/addition-routes.js';
+import service from './routes/service-routes.js';
 //
 
 
@@ -68,6 +69,7 @@ app.use('/api/seed', seedRoutes);
 app.use('/api/admin', admin);
 app.use('/api/vehicles', vehicle);
 app.use('/api/additions-v2', addition);
+app.use('/api/services-v2', service);
 
 // Test mail endpoint
 app.get('/api/testmail', testMail);
