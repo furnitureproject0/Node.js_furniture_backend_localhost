@@ -3,6 +3,7 @@
 import { Addition, Service, ServiceAddition } from '../../models/index.js';
 import AppError from '../../utils/AppError.js';
 import { validateAdditions } from './helper-validate-addition.js';
+import { Op } from 'sequelize';
 
 /**
  * Update an existing service
@@ -24,7 +25,10 @@ export const updateService = async (id, data, options = {}) => {
 
     if (data.name && data.name !== service.name) {
         const existingService = await Service.findOne({
-            where: { name: data.name },
+            where: { 
+                name: data.name,
+                id: { [Op.ne]: id }
+             },
             ...(transaction && { transaction }),
         });
         if (existingService) {

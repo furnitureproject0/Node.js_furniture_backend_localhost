@@ -53,9 +53,5 @@ export const updateAddition = async (id, data, options = {}) => {
         ...(transaction && { transaction }),
     });
 
-    await addition.reload({
-        ...(transaction && { transaction }),
-    });
-
     return addition.toJSON();
 }
