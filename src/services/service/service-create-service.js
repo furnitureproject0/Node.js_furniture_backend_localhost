@@ -45,6 +45,7 @@ export const createService = async (data, options = {}) => {
         minimum_charge: data.minimum_charge || null,
         discount: data.discount || null,
         is_active: data.is_active ?? true,
+        is_deleted: false
     }
 
     const service = await Service.create(serviceData, { 
