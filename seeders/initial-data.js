@@ -134,12 +134,12 @@ export const seed = async () => {
 
             await ServiceAddition.bulkCreate([
                 {
-                    serviceId: services[0].id,
-                    additionId: additions[1].id
+                    service_id: services[0].id,
+                    addition_id: additions[1].id
                 },
                 {
-                    serviceId: services[0].id,
-                    additionId: additions[2].id
+                    service_id: services[0].id,
+                    addition_id: additions[2].id
                 }
             ], { transaction: t });
 

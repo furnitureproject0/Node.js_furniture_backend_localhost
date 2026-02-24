@@ -326,15 +326,15 @@ Transaction.belongsTo(User, {
 
 Service.belongsToMany(Addition, {
     through: ServiceAddition,
-    foreignKey: 'serviceId',
-    otherKey: 'additionId',
+    foreignKey: 'service_id',
+    otherKey: 'addition_id',
     as: 'additions'
 });
 
 Addition.belongsToMany(Service, {
     through: ServiceAddition,
-    foreignKey: 'additionId',
-    otherKey: 'serviceId',
+    foreignKey: 'addition_id',
+    otherKey: 'servicei_d',
     as: 'services'
 });
 

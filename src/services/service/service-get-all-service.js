@@ -54,6 +54,7 @@ export const getAllServices = async (filters, search = '', pagination = {}, user
                 is_deleted: false,
                 is_active: true
             },
+            required: false,
             through: { attributes: [] }
         }],
         limit: limitNumber,
