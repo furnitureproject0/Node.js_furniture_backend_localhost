@@ -10,40 +10,28 @@ export const getAdditions = asyncHandler(async (req, res) => {
         page: parseInt(page) || 1,
         limit: parseInt(limit) || 10
     };
-    try {
-        const result = await getAllAdditions(filters, search, pagination, req.user);
-        res.status(200).json({
-            success: true,
-            message: 'Additions retrieved successfully',
-            data: result
-        });
-    } catch (error) {
-        throw new AppError(error.message, 500);
-    }
+    const result = await getAllAdditions(filters, search, pagination, req.user);
+    res.status(200).json({
+        success: true,
+        message: 'Additions retrieved successfully',
+        data: result
+    });
 });
 
 export const createNewAddition = asyncHandler(async (req, res) => {
-    try {
-        const addition = await createAddition(req.body);
-        res.status(201).json({
-            success: true,
-            message: 'Addition created successfully',
-            data: addition
-        });
-    } catch (error) {
-        throw new AppError(error.message, 500);
-    }
+    const addition = await createAddition(req.body);
+    res.status(201).json({
+        success: true,
+        message: 'Addition created successfully',
+        data: addition
+    });
 });
 
 export const updateAdditionById = asyncHandler(async (req, res) => {
-    try {
-        const addition = await updateAddition(req.params.id, req.body);
-        res.status(200).json({
-            success: true,
-            message: 'Addition updated successfully',
-            data: addition
-        });
-    } catch (error) {
-        throw new AppError(error.message, 500);
-    }
+    const addition = await updateAddition(req.params.id, req.body);
+    res.status(200).json({
+        success: true,
+        message: 'Addition updated successfully',
+        data: addition
+    });
 });
