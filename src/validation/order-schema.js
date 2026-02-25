@@ -43,7 +43,7 @@ export const orderBaseSchema = Joi.object({
 
 export const createOrderSchema = orderBaseSchema.keys(
     {
-        services: orderServicesSchema.min(1)
+        services: orderServicesSchema.min(1).required()
     }
 )
 
