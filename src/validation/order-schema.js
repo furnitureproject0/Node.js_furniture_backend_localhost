@@ -27,16 +27,15 @@ export const locationSchema = Joi.object({
     has_elevator: Joi.boolean().optional().default(false),
     latitude: Joi.number().precision(8).allow(null).optional(),
     longitude: Joi.number().precision(8).allow(null).optional(),
-    notes: Joi.string().allow('').max(1000).optional()
+    notes: Joi.string().allow('').max(1000).optional(),
+    qualities: Joi.object().optional().default({})
 });
 
 export const orderBaseSchema = Joi.object({
     preferred_date: Joi.date().required(),
     preferred_time: Joi.string().required(),
-    location: locationSchema.required(),
-    destination_location: locationSchema.keys({
-        address: Joi.string().allow('').optional()
-    }).optional().allow('', null).default(null),
+    primary_location_id: locationSchema.required(),
+    secondary_location_id: locationSchema.optional(),
     number_of_rooms: Joi.number().allow(null, '').optional(),
     rooms: Joi.any().allow(null).optional(),
     notes: Joi.string().allow('').max(1000).optional()

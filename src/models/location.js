@@ -55,6 +55,12 @@ const Location = sequelize.define('Location', {
     //     allowNull: true,
     //     defaultValue: false
     // },
+    qualities: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: {},
+        comment: 'Site of qualities'
+    },
     notes: {
         type: DataTypes.TEXT,
         allowNull: true

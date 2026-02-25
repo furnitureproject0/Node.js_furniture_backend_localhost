@@ -26,6 +26,22 @@ const Order = sequelize.define('Order', {
         type: DataTypes.TIME,
         allowNull: true
     },
+    primary_location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'locations',
+            key: 'id'
+        }
+    },
+    secondary_location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'locations',
+            key: 'id'
+        }
+    },
     images: {
         type: DataTypes.JSON,
         allowNull: true,
