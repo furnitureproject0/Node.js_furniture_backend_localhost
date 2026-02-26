@@ -35,6 +35,7 @@ import admin from './routes/admin/index.js';
 import vehicle from './routes/vehicle-routes.js';
 import addition from './routes/addition-routes.js';
 import service from './routes/service-routes.js';
+import order from './routes/order-routes.js';
 //
 
 
@@ -70,6 +71,7 @@ app.use('/api/admin', admin);
 app.use('/api/vehicles', vehicle);
 app.use('/api/additions-v2', addition);
 app.use('/api/services-v2', service);
+app.use('/api/orders-v2', order);
 
 // Test mail endpoint
 app.get('/api/testmail', testMail);

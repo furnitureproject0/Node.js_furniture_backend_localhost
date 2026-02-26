@@ -27,7 +27,8 @@ const ServiceAddition = sequelize.define('ServiceAddition', {
     }
 }, {
     tableName: 'service_addition',
-    timestamps: true
+    timestamps: true,
+    underscored: true
 });
 
 export default ServiceAddition;

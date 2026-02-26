@@ -20,6 +20,7 @@ import OrderServiceAddition from './order-service-addition.js';
 import Notification from './notification.js';
 import NotificationRecipient from './notification_recipients.js';
 import Vehicle from './vehicle.js';
+import OrderVehicle from './order-vehicle.js';
 
 // Company Social Media
 Company.hasMany(CompanySocialMedia, {
@@ -302,25 +303,25 @@ Transaction.belongsTo(User, {
 });
 
 // Order Location associations
-// Order.belongsTo(Location, {
-//     foreignKey: 'location_id',
-//     as: 'location'
-// });
+Order.belongsTo(Location, {
+    foreignKey: 'primary_location_id',
+    as: 'primary_location'
+});
 
-// Order.belongsTo(Location, {
-//     foreignKey: 'destination_location_id',
-//     as: 'destinationLocation'
-// });
+Order.belongsTo(Location, {
+    foreignKey: 'secondary_location_id',
+    as: 'secondary_location'
+});
 
-// Location.hasMany(Order, {
-//     foreignKey: 'location_id',
-//     as: 'pickupOrders'
-// });
+Location.hasMany(Order, {
+    foreignKey: 'primary_location_id',
+    as: 'primary_location_orders'
+});
 
-// Location.hasMany(Order, {
-//     foreignKey: 'destination_location_id',
-//     as: 'destinationOrders'
-// });
+Location.hasMany(Order, {
+    foreignKey: 'secondary_location_id',
+    as: 'secondary_location_orders'
+});
 
 // service - addition many-to-many relationship through ServiceAdditions
 
@@ -334,9 +335,12 @@ Service.belongsToMany(Addition, {
 Addition.belongsToMany(Service, {
     through: ServiceAddition,
     foreignKey: 'addition_id',
-    otherKey: 'servicei_d',
+    otherKey: 'service_id',
     as: 'services'
 });
+
+ServiceAddition.belongsTo(Service, { foreignKey: 'service_id' });
+ServiceAddition.belongsTo(Addition, { foreignKey: 'addition_id' }); 
 
 // User - Location associations
 User.belongsTo(Location, {
@@ -362,22 +366,22 @@ Location.hasMany(Company, {
 
 
 OrderService.belongsTo(Location, {
-    foreignKey: 'to_location_id',
+    foreignKey: 'primary_location_id',
     as: 'toLocation'
 });
 
 OrderService.belongsTo(Location, {
-    foreignKey: 'from_location_id',
+    foreignKey: 'secondary_location_id',
     as: 'fromLocation'
 });
 
 Location.hasMany(OrderService, {
-    foreignKey: 'from_location_id',
+    foreignKey: 'secondary_location_id',
     as: 'fromLocationOrders'
 });
 
 Location.hasMany(OrderService, {
-    foreignKey: 'to_location_id',
+    foreignKey: 'primary_location_id',
     as: 'toLocationOrders'
 });
 
@@ -423,6 +427,21 @@ Company.hasMany(Vehicle, {
     as: 'vehicles'
 });
 
+// Order-Vehicle many-to-many relationship through OrderVehicle
+
+Order.belongsToMany(Vehicle, { 
+        through: OrderVehicle, 
+        foreignKey: 'order_id',
+        otherKey: 'vehicle_id',
+        as: 'assigned_vehicles'
+    });
+    Vehicle.belongsToMany(Order, { 
+        through: OrderVehicle, 
+        foreignKey: 'vehicle_id',
+        otherKey: 'order_id',
+        as: 'order_trips'
+    });
+
 
 export {
     User,
@@ -446,5 +465,6 @@ export {
     OrderServiceAddition,
     Notification,
     NotificationRecipient,
-    Vehicle
+    Vehicle,
+    OrderVehicle
 };

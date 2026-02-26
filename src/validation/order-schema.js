@@ -5,9 +5,28 @@ import { createOfferSchema } from './offer-schema.js';
 const orderServicesSchema = Joi.array().items(
     Joi.object({
         service_id: Joi.number().integer().required(),
+
+        pricing_type: Joi.string().valid('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom').optional(),
+        price_per_unit: Joi.number().precision(2).positive().optional(),
+        minimum_charge: Joi.number().precision(2).min(0).optional(),
+        total_price: Joi.number().precision(2).min(0).optional(),
+        details: Joi.object().optional().default({}),
+        company_id: Joi.number().integer().optional(),
+        min_units: Joi.number().integer().min(1).optional(),
+        max_units: Joi.number().integer().min(1).optional(), 
+
         additions: Joi.array().items(
             Joi.object({
                 addition_id: Joi.number().integer().required(),
+
+                pricing_type: Joi.string().valid('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom').optional(),
+                price_per_unit: Joi.number().precision(2).positive().optional(),
+                minimum_charge: Joi.number().precision(2).min(0).optional(),
+                total_price: Joi.number().precision(2).min(0).optional(),
+                details: Joi.object().optional().default({}),
+                min_units: Joi.number().integer().min(1).optional(),
+                max_units: Joi.number().integer().min(1).optional(), 
+
                 note: Joi.when('addition_id', {
                     is: 1,
                     then: Joi.string().required(),
@@ -32,13 +51,20 @@ export const locationSchema = Joi.object({
 });
 
 export const orderBaseSchema = Joi.object({
-    preferred_date: Joi.date().required(),
-    preferred_time: Joi.string().required(),
-    primary_location_id: locationSchema.required(),
-    secondary_location_id: locationSchema.optional(),
+    company_id: Joi.number().integer().required(),
+    execution_date: Joi.date().required(),
+    execution_time: Joi.string().required(),
+    primary_location: locationSchema.required(),
+    secondary_location: locationSchema.optional(),
     number_of_rooms: Joi.number().allow(null, '').optional(),
     rooms: Joi.any().allow(null).optional(),
-    notes: Joi.string().allow('').max(1000).optional()
+    notes: Joi.string().allow('').max(1000).optional(),
+    vehicles: Joi.array().items(
+        Joi.object({
+            id: Joi.number().integer().optional(),
+            license_plate: Joi.string().trim().max(31).optional()
+        })
+    ).optional(),
 });
 
 export const createOrderSchema = orderBaseSchema.keys(
@@ -56,6 +82,11 @@ export const updateOrderSchema = createOrderSchema.fork(
 export const createOrderForClientSchema = createOrderSchema.keys({
     email
 });
+
+export const updateOrderForClientSchema = createOrderForClientSchema.fork(
+    Object.keys(createOrderForClientSchema.describe().keys),
+    (schema) => schema.optional()
+).min(1);
 
 
 export const createOrderAsSiteAdminschema = createOrderSchema.keys({

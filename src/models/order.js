@@ -17,6 +17,14 @@ const Order = sequelize.define('Order', {
             key: 'id'
         }
     },
+    company_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'companies',
+            key: 'id'
+        }
+    },
     execution_date: {
         type: DataTypes.DATEONLY,
         allowNull: true,

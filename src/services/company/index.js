@@ -1,0 +1,1 @@
+export * from './company-get-all-service.js';

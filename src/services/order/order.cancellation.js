@@ -21,22 +21,22 @@ export const cancelOrderWithRelations = async ({ order, reason, transaction }) =
     }
 
     // Cancel all pending offers
-    const pendingOffers = await Offer.findAll({
-        include: [
-            {
-                model: OrderService,
-                as: 'orderService',
-                where: { order_id: order.id },
-                attributes: []
-            }
-        ],
-        where: { status: 'pending' },
-        transaction
-    });
+    // const pendingOffers = await Offer.findAll({
+    //     include: [
+    //         {
+    //             model: OrderService,
+    //             as: 'orderService',
+    //             where: { order_id: order.id },
+    //             attributes: []
+    //         }
+    //     ],
+    //     where: { status: 'pending' },
+    //     transaction
+    // });
 
-    for (const offer of pendingOffers) {
-        await offer.update({ status: 'cancelled' }, { transaction });
-    }
+    // for (const offer of pendingOffers) {
+    //     await offer.update({ status: 'cancelled' }, { transaction });
+    // }
 
     // Add timeline entry
     await OrderTimeline.create({
