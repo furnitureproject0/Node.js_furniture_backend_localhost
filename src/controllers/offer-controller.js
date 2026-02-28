@@ -68,7 +68,7 @@ export const adminUpdateOffer = asyncHandler(async (req, res) => {
 export const cancelOfferByAdmin = asyncHandler(async (req, res) => {
     const transaction = await sequelize.transaction();
     try {
-        const { id } = req.params; // ده الـ ID بتاع الأوردر اللي نوعه Offer
+        const { id } = req.params;
         const { reason } = req.body;
 
         const userId = req.user.id;
