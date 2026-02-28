@@ -11,8 +11,8 @@ export const getAllNotifications = asyncHandler(async (req, res) => {
 
     const { rows: notifications, count } = await Notification.findAndCountAll({
         where: {
-            user_id: userId,
-            show: true
+            actor_id: userId,
+            // show: true
         },
         limit,
         offset,
@@ -41,7 +41,7 @@ export const getNotificationById = asyncHandler(async (req, res) => {
     const notification = await Notification.findOne({
         where: {
             id,
-            user_id: userId
+            actor_id: userId
         }
     });
 
@@ -66,7 +66,7 @@ export const readNotification = asyncHandler(async (req, res) => {
     const notification = await Notification.findOne({
         where: {
             id,
-            user_id: userId
+            actor_id: userId
         }
     });
 
@@ -94,7 +94,7 @@ export const readAllNotifications = asyncHandler(async (req, res) => {
         { is_read: true },
         {
             where: {
-                user_id: userId,
+                actor_id: userId,
                 is_read: false
             }
         }
@@ -116,7 +116,7 @@ export const hideNotification = asyncHandler(async (req, res) => {
     const notification = await Notification.findOne({
         where: {
             id,
-            user_id: userId
+            actor_id: userId
         }
     });
 
@@ -124,9 +124,9 @@ export const hideNotification = asyncHandler(async (req, res) => {
         throw new AppError('Notification not found', 404);
     }
 
-    await notification.update({
-        show: false
-    });
+    // await notification.update({
+    //     show: false
+    // });
 
     res.status(200).json({
         success: true,
@@ -141,11 +141,11 @@ export const hideAllNotifications = asyncHandler(async (req, res) => {
     const userId = req.user.id;
 
     const [updatedCount] = await Notification.update(
-        { show: false },
+        // { show: false },
         {
             where: {
-                user_id: userId,
-                show: true
+                actor_id: userId,
+                // show: true
             }
         }
     );

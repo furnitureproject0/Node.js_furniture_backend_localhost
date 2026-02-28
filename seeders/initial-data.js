@@ -36,12 +36,12 @@ export const seed = async () => {
                     phone: "+41448403000"
                 },
                 {
-                    name: "Rebo Transport GmbH",
+                    name: "Angebotsprofi Transport GmbH",
                     description:
                         "Professionelles Umzugs- und Transportunternehmen mit über 10 Jahren Erfahrung in Schwertransporten, Umzügen, Reinigungen und Entsorgungen.",
                     address: "Industriestrasse 54, 8152 Glattbrugg",
                     email: "rebotransport.info@gmail.com",
-                    website: "https://www.transport-rebo.ch",
+                    website: "https://www.angebotsprofi.ch",
                     phone: "0448103333"
                 }
             ], { transaction: t });
