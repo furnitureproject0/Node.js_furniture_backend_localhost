@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 // dotenv.config();
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-console.log('JWT_SECRET in passport.js:', process.env.JWT_SECRET);
+// console.log('JWT_SECRET in passport.js:', process.env.JWT_SECRET);
 
 import express from 'express';
 import cors from 'cors';
