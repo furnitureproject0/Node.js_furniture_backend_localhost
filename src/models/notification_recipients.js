@@ -44,6 +44,7 @@ const NotificationRecipient = sequelize.define('NotificationRecipient', {
 }, {
     tableName: 'notification_recipients',
     timestamps: true,
+    underscored: true,
     indexes: [
         { fields: ['user_id'] },
         { fields: ['notification_id'] }

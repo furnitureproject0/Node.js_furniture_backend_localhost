@@ -4,7 +4,7 @@ import { Order, OrderService, OrderServiceAddition, Vehicle, OrderVehicle, Locat
 import AppError from "../../utils/AppError.js";
 import { getOrCreateLocation } from '../location/index.js';
 import { getCompany } from '../company/index.js';
-import { validateAndGetVehicles, validateServicesAndAdditions } from '../helpers/order-helpers.js';
+import { validateAndGetVehicles, validateServicesAndAdditions } from '../helpers/index.js';
 
 /**
  * Update an existing order details and pricing ranges

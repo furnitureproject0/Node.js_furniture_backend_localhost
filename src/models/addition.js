@@ -61,7 +61,8 @@ const Addition = sequelize.define('Addition', {
     }
 }, {
     tableName: 'additions',
-    timestamps: true
+    timestamps: true,
+    underscored: true
 });
 
 export default Addition;

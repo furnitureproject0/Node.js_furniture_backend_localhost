@@ -15,7 +15,8 @@ const UserCompany = sequelize.define('UserCompany', {
             model: 'users',
             key: 'id'
         },
-        primaryKey: true
+        unique: false,
+        // primaryKey: true
     },
     company_id: {
         type: DataTypes.INTEGER,
@@ -23,7 +24,8 @@ const UserCompany = sequelize.define('UserCompany', {
             model: 'companies',
             key: 'id'
         },
-        primaryKey: true
+        unique: false,
+        // primaryKey: true
     },
     type: { 
         type: DataTypes.ENUM('internal', 'external'),
@@ -33,8 +35,14 @@ const UserCompany = sequelize.define('UserCompany', {
 }, {
     tableName: 'user_companies',
     timestamps: true,
-    underscored: true
-
+    underscored: true,
+    indexes: [
+        {
+            unique: true,
+            fields: ['user_id', 'company_id', 'type'],
+            name: 'unique_user_company_type'
+        }
+    ]
 });
 
 export default UserCompany;

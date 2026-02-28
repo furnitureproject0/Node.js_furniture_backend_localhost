@@ -21,7 +21,8 @@ const Phone = sequelize.define('Phone', {
     },
 }, {
     tableName: 'phones',
-    timestamps: false,
+    timestamps: true,
+    underscored: true
 });
 
 export default Phone;

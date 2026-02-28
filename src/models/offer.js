@@ -48,7 +48,8 @@ const Offer = sequelize.define('Offer', {
     }
 }, {
     tableName: 'offers',
-    timestamps: true
+    timestamps: true,
+    underscored: true
 });
 
 export default Offer;

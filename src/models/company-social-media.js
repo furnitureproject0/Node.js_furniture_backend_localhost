@@ -29,7 +29,8 @@ const CompanySocialMedia = sequelize.define('CompanySocialMedia', {
     }
 }, {
     tableName: 'company_social_media',
-    timestamps: true
+    timestamps: true,
+    underscored: true
 });
 
 export default CompanySocialMedia;

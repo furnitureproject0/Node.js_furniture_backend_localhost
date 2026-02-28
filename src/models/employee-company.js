@@ -50,7 +50,8 @@ const EmployeeCompany = sequelize.define('EmployeeCompany', {
     }
 }, {
     tableName: 'employees_companies',
-    timestamps: true
+    timestamps: true,
+    underscored: true
 });
 
 export default EmployeeCompany;

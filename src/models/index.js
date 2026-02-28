@@ -447,14 +447,16 @@ Vehicle.belongsToMany(Order, {
 User.belongsToMany(Company, { 
     through: UserCompany, 
     foreignKey: 'user_id', 
-    as: 'managedCompanies' 
+    as: 'managedCompanies',
+    unique: false
 });
 
 // Company can be managed by many users
 Company.belongsToMany(User, { 
     through: UserCompany, 
     foreignKey: 'company_id', 
-    as: 'admins' 
+    as: 'admins',
+    unique: false
 });
 
 // Order <-> Company

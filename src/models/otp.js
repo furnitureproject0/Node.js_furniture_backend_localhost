@@ -45,6 +45,7 @@ const OTP = sequelize.define('OTP', {
 }, {
     tableName: 'otps',
     timestamps: true,
+    underscored: true
     // indexes: [
     //     {
     //         unique: true,

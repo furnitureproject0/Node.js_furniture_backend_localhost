@@ -4,6 +4,8 @@ import { getAllOrders, createOrderService, updateOrderService } from '../service
 import sequelize from '../config/database.js';
 import { getUser } from '../services/user/index.js';
 import { cancelOrder } from '../services/order/index.js';
+import { getCompanyAdmins } from '../services/company/index.js'; 
+import { createNotification, sendNotification } from '../utils/notifications.js';
 
 
 export const getOrders = asyncHandler(async (req, res) => {
@@ -45,14 +47,48 @@ export const adminCreateOrderForClient = asyncHandler(async (req, res) => {
 
         req.body.client_id = user.id;
 
-        const result = await createOrderService(req.body, { transaction });
+        const order = await createOrderService(req.body, { transaction });
 
+        const companyIdsSet = new Set();
+        if (order.company_id) companyIdsSet.add(order.company_id);
+
+        if (order.orderServices && order.orderServices.length > 0) {
+            order.orderServices.forEach(service => {
+                if (service.company_id) companyIdsSet.add(service.company_id);
+            });
+        }
+
+        const uniqueCompanyIds = Array.from(companyIdsSet);
+
+        let notification = null;
+
+        if (uniqueCompanyIds.length > 0) {
+            const adminUserIds = await getCompanyAdmins(uniqueCompanyIds, { transaction });
+
+            if (adminUserIds.length > 0) {
+                notification = await createNotification({
+                    title: 'New Order Assigned',
+                    message: `A new order (#${order.id}) has been assigned to your company. Please review the details.`,
+                    type: 'order',
+                    actor_id: req.user.id, 
+                    recipients: adminUserIds,
+                    payload: { 
+                        order_id: order.id, 
+                        // link: `/orders/${order.id}` 
+                    }
+                }, { transaction });
+            }
+        }
         await transaction.commit();
+
+        if (notification) {
+            await sendNotification(notification);
+        }
 
         res.status(200).json({
             success: true,
             message: 'Order created successfully',
-            data: result
+            data: order
         });
     } catch (error) {
         await transaction.rollback();

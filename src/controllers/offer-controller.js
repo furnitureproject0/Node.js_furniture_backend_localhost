@@ -1,9 +1,8 @@
 import asyncHandler from 'express-async-handler';
-import { createOffer, updateOffer, getOffersList } from '../services/offer-v2/index.js';
+import { createOffer, updateOffer, getOffersList, cancelOfferService } from '../services/offer-v2/index.js';
 import sequelize from '../config/database.js';
 import { getUser } from '../services/user/index.js';
 import AppError from '../utils/AppError.js';
-import { cancelOrder } from '../services/order/index.js';
 
 
 // Get all offers
@@ -68,32 +67,18 @@ export const adminUpdateOffer = asyncHandler(async (req, res) => {
 export const cancelOfferByAdmin = asyncHandler(async (req, res) => {
     const transaction = await sequelize.transaction();
     try {
-        const { id } = req.params;
+        const { id } = req.params; 
         const { reason } = req.body;
-
         const userId = req.user.id;
         const userRole = req.user.role;
 
-        const targetOrder = await Order.findByPk(id, { transaction });
-
-        if (!targetOrder) {
-            throw new AppError('Record not found', 404);
-        }
-        
-        if (targetOrder.type !== 'offer') {
-            throw new AppError('Invalid operation: This ID belongs to an order, not an offer', 400);
-        }
-
-        const cancelledOffer = await cancelOrder({
-            orderId: id,
-            userId: userId,
-            userRole: userRole,
-            reason: reason || 'Offer cancelled by admin',
-            options: {
-                transaction, 
-                skipOwnershipCheck: ['super_admin', 'site_admin', 'company_admin', 'company_secretary'].includes(userRole)
-            }
-        });
+        const cancelledOffer = await cancelOfferService(
+            id, 
+            userId, 
+            userRole, 
+            reason, 
+            { transaction }
+        );
 
         await transaction.commit();
 
@@ -103,11 +88,12 @@ export const cancelOfferByAdmin = asyncHandler(async (req, res) => {
             data: {
                 offer_id: cancelledOffer.id,
                 status: cancelledOffer.status,
+                type: cancelledOffer.type,
                 cancelled_at: new Date()
             }
         });
     } catch (error) {
         await transaction.rollback();
-        throw new AppError(error.message || 'Failed to cancel offer', 500);
+        throw new AppError(error.message || 'Failed to cancel offer', error.statusCode || 500);
     }
 });

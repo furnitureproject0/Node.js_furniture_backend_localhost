@@ -46,6 +46,7 @@ const OfferEmployee = sequelize.define(
     {
         tableName: 'offer_employees',
         timestamps: true,
+        underscored: true
     }
 );
 

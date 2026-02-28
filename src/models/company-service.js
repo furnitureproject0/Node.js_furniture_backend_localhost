@@ -34,7 +34,8 @@ const CompanyService = sequelize.define(
     },
     {
         tableName: "company_services",
-        timestamps: false,
+        timestamps: true,
+        underscored: true
     }
 );
 

@@ -29,7 +29,8 @@ const OrderTimeline = sequelize.define('OrderTimeline', {
 }, {
     tableName: 'order_timelines',
     timestamps: true,
-    updatedAt: false
+    updatedAt: false,
+    underscored: true
 });
 
 export default OrderTimeline;

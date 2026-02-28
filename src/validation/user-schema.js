@@ -4,9 +4,9 @@ import { locationSchema } from "./location-schema.js";
 
 export const userBaseSchema = Joi.object({
     email,
-    phones,
+    phones: phones.optional(),
     name,
-    password,
+    password: password.optional(), // Password is optional for updates, but required for creation
     birthdate,
     role: Joi.string()
         .valid(

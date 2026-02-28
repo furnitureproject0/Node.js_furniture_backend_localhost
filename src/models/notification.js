@@ -69,7 +69,8 @@ const Notification = sequelize.define('Notification', {
 
 }, {
     tableName: 'notifications',
-    timestamps: true
+    timestamps: true,
+    underscored: true,
 });
 
 export default Notification;

@@ -79,7 +79,8 @@ const OrderServiceAddition = sequelize.define('OrderServiceAddition', {
     }
 }, {
     tableName: 'order_service_additions',
-    timestamps: true
+    timestamps: true,
+    underscored: true
 });
 
 export default OrderServiceAddition;
