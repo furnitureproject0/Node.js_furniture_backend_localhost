@@ -404,7 +404,8 @@ Notification.hasMany(NotificationRecipient, {
 });
 
 NotificationRecipient.belongsTo(Notification, {
-    foreignKey: 'notification_id'
+    foreignKey: 'notification_id',
+    as: 'notification'
 });
 
 NotificationRecipient.belongsTo(User, {
@@ -445,18 +446,24 @@ Vehicle.belongsToMany(Order, {
 
 // User can have many companies
 User.belongsToMany(Company, { 
-    through: UserCompany, 
+    through: {
+        model: UserCompany,
+        unique: false
+    },
     foreignKey: 'user_id', 
     as: 'managedCompanies',
-    unique: false
+    uniqueKey: false
 });
 
 // Company can be managed by many users
 Company.belongsToMany(User, { 
-    through: UserCompany, 
+    through: {
+        model: UserCompany,
+        unique: false
+    },
     foreignKey: 'company_id', 
     as: 'admins',
-    unique: false
+    uniqueKey: false
 });
 
 // Order <-> Company

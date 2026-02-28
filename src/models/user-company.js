@@ -15,7 +15,6 @@ const UserCompany = sequelize.define('UserCompany', {
             model: 'users',
             key: 'id'
         },
-        unique: false,
         // primaryKey: true
     },
     company_id: {
@@ -24,7 +23,6 @@ const UserCompany = sequelize.define('UserCompany', {
             model: 'companies',
             key: 'id'
         },
-        unique: false,
         // primaryKey: true
     },
     type: { 
