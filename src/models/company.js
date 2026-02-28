@@ -28,7 +28,7 @@ const Company = sequelize.define('Company', {
         type: DataTypes.INTEGER,
         allowNull: true, // make it reverse
         references: {
-            model: 'Locations',
+            model: 'locations',
             key: 'id'
         }
     },
@@ -62,6 +62,7 @@ const Company = sequelize.define('Company', {
 }, {
     tableName: 'companies',
     timestamps: true,
+    underscored: true
 });
 
 export default Company;
