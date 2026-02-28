@@ -1,7 +1,7 @@
+// models/offer.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import OrderService from './order-service.js';
-import Company from './company.js';
+import Order from './order.js';
 
 const Offer = sequelize.define('Offer', {
     id: {
@@ -9,51 +9,38 @@ const Offer = sequelize.define('Offer', {
         primaryKey: true,
         autoIncrement: true
     },
-    order_service_id: {
+    order_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: true, // Ensures 1-to-1 relationship (One Order has One Offer state)
         references: {
-            model: OrderService,
+            model: Order,
             key: 'id'
         }
     },
-    company_id: {
-        type: DataTypes.INTEGER,
+    client_accepted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
-        references: {
-            model: Company,
-            key: 'id'
-        }
+        comment: 'True if the client accepted the offer pricing'
     },
-    hourly_rate: {
-        type: DataTypes.DECIMAL,
-        allowNull: false
-    },
-    currency: {
-        type: DataTypes.STRING,
+    company_accepted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
-        defaultValue: 'CHF'
+        comment: 'True if the main company assigned to the order accepted'
     },
-    min_hours: {
-        type: DataTypes.DECIMAL(5, 2),
-        allowNull: false
-    },
-    max_hours: {
-        type: DataTypes.DECIMAL(5, 2),
-        allowNull: false
-    },
-    date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-    time: {
-        type: DataTypes.TIME,
-        allowNull: false
-    },
-    status: {
-        type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'cancelled'),
+    all_companies_accepted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
-        defaultValue: 'pending'
+        comment: 'True when ALL involved service companies have accepted'
+    },
+    is_confirmed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+        comment: 'True when client_accepted, company_accepted, and all_companies_accepted are ALL true'
     },
     notes: {
         type: DataTypes.TEXT,

@@ -17,7 +17,7 @@ export const getOrders = asyncHandler(async (req, res) => {
         max_price 
     } = req.query;
     
-    const filters = { status, execution_date, min_price, max_price };
+    const filters = { status, execution_date, min_price, max_price, type: 'order' }; // Ensure we only fetch orders, not offers or appointments
     const pagination = { page, limit };
 
     try {
@@ -64,8 +64,11 @@ export const adminCreateOrderForClient = asyncHandler(async (req, res) => {
 export const adminUpdateOrderForClient = asyncHandler(async (req, res, next) => {
     const transaction = await sequelize.transaction();
     try {
-        const user = await getUser({ email: req.body.email }, { transaction });
-        req.body.client_id = user.id;
+
+        if (req.body.email) {
+            const user = await getUser({ email: req.body.email }, { transaction });
+            req.body.client_id = user.id;
+        }
 
         const { id } = req.params; 
         const orderData = req.body; 

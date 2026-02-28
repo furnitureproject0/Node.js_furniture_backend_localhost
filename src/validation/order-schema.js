@@ -5,37 +5,37 @@ import { createOfferSchema } from './offer-schema.js';
 const orderServicesSchema = Joi.array().items(
     Joi.object({
         service_id: Joi.number().integer().required(),
-
         pricing_type: Joi.string().valid('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom').optional(),
-        price_per_unit: Joi.number().precision(2).positive().optional(),
+        price_per_unit: Joi.number().precision(2).min(0).optional(), // Changed to min(0) to allow free if needed
+        fixed_price: Joi.number().precision(2).min(0).optional(), // 👈 Added for Hybrid/Flat pricing
         minimum_charge: Joi.number().precision(2).min(0).optional(),
         total_price: Joi.number().precision(2).min(0).optional(),
+        min_total_price: Joi.number().precision(2).min(0).optional(), // 👈 Added
+        max_total_price: Joi.number().precision(2).min(0).optional(), // 👈 Added
         details: Joi.object().optional().default({}),
         company_id: Joi.number().integer().optional(),
-        min_units: Joi.number().integer().min(1).optional(),
-        max_units: Joi.number().integer().min(1).optional(), 
+        min_units: Joi.number().min(0).optional(), // Changed to number (not integer) for 0.5 hours etc.
+        max_units: Joi.number().min(0).optional(), 
 
         additions: Joi.array().items(
             Joi.object({
                 addition_id: Joi.number().integer().required(),
-
                 pricing_type: Joi.string().valid('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom').optional(),
-                price_per_unit: Joi.number().precision(2).positive().optional(),
+                price_per_unit: Joi.number().precision(2).min(0).optional(),
+                fixed_price: Joi.number().precision(2).min(0).optional(), // 👈 Added
                 minimum_charge: Joi.number().precision(2).min(0).optional(),
                 total_price: Joi.number().precision(2).min(0).optional(),
+                min_total_price: Joi.number().precision(2).min(0).optional(), // 👈 Added
+                max_total_price: Joi.number().precision(2).min(0).optional(), // 👈 Added
                 details: Joi.object().optional().default({}),
-                min_units: Joi.number().integer().min(1).optional(),
-                max_units: Joi.number().integer().min(1).optional(), 
-
-                note: Joi.when('addition_id', {
-                    is: 1,
-                    then: Joi.string().required(),
-                    otherwise: Joi.string().allow('').optional()
-                })
+                min_units: Joi.number().min(0).optional(),
+                max_units: Joi.number().min(0).optional(), 
+                note: Joi.string().allow('', null).optional() // 👈 Simplified this to avoid the "required" error you saw
             })
-        ).allow(null).empty().optional(),
+        ).allow(null).optional(),
     })
 );
+
 
 export const locationSchema = Joi.object({
     address: Joi.string().max(255).required(),
@@ -59,6 +59,11 @@ export const orderBaseSchema = Joi.object({
     number_of_rooms: Joi.number().allow(null, '').optional(),
     rooms: Joi.any().allow(null).optional(),
     notes: Joi.string().allow('').max(1000).optional(),
+    
+    // 👈 Added timeline fields
+    timelineMessage: Joi.string().optional(),
+    timelineStatus: Joi.string().optional(),
+
     vehicles: Joi.array().items(
         Joi.object({
             id: Joi.number().integer().optional(),

@@ -4,3 +4,7 @@ node_modules
 docs.md
 
 uploads
+
+docker-compose.yml
+
+Dockerfile

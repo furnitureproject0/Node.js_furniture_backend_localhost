@@ -1,3 +1,4 @@
+import Location from './location.js';
 import Company from './company.js';
 import EmployeeCompany from './employee-company.js';
 import CompanySocialMedia from './company-social-media.js';
@@ -14,13 +15,13 @@ import OfferEmployee from './offer-employee.js';
 import Report from './report.js';
 import ReportEmployee from './report-employee.js';
 import Transaction from './transaction.js';
-import Location from './location.js';
 import ServiceAddition from './service-addition.js';
 import OrderServiceAddition from './order-service-addition.js';
 import Notification from './notification.js';
 import NotificationRecipient from './notification_recipients.js';
 import Vehicle from './vehicle.js';
 import OrderVehicle from './order-vehicle.js';
+import UserCompany from './user-company.js';
 
 // Company Social Media
 Company.hasMany(CompanySocialMedia, {
@@ -435,12 +436,48 @@ Order.belongsToMany(Vehicle, {
         otherKey: 'vehicle_id',
         as: 'assigned_vehicles'
     });
-    Vehicle.belongsToMany(Order, { 
-        through: OrderVehicle, 
-        foreignKey: 'vehicle_id',
-        otherKey: 'order_id',
-        as: 'order_trips'
-    });
+Vehicle.belongsToMany(Order, { 
+    through: OrderVehicle, 
+    foreignKey: 'vehicle_id',
+    otherKey: 'order_id',
+    as: 'order_trips'
+});
+
+// User can have many companies
+User.belongsToMany(Company, { 
+    through: UserCompany, 
+    foreignKey: 'user_id', 
+    as: 'managedCompanies' 
+});
+
+// Company can be managed by many users
+Company.belongsToMany(User, { 
+    through: UserCompany, 
+    foreignKey: 'company_id', 
+    as: 'admins' 
+});
+
+// Order <-> Company
+Order.belongsTo(Company, {
+    foreignKey: 'company_id',
+    as: 'company'
+});
+
+Company.hasMany(Order, {
+    foreignKey: 'company_id',
+    as: 'orders'
+});
+
+// Order ↔ Offer (1-to-1 Relationship)
+Order.hasOne(Offer, {
+    foreignKey: 'order_id',
+    as: 'offerDetails' 
+});
+
+Offer.belongsTo(Order, {
+    foreignKey: 'order_id',
+    as: 'order'
+});
 
 
 export {
@@ -466,5 +503,6 @@ export {
     Notification,
     NotificationRecipient,
     Vehicle,
-    OrderVehicle
+    OrderVehicle,
+    UserCompany
 };

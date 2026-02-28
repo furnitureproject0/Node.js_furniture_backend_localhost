@@ -24,8 +24,8 @@ export const seed = async () => {
                 return;
             }
 
-            // Create Company first (needed for company users)
-            const company = await Company.bulkCreate([
+            // Create Companies
+            const companies = await Company.bulkCreate([
                 {
                     name: "Umzugskönig AG",
                     description:
@@ -44,106 +44,45 @@ export const seed = async () => {
                     website: "https://www.transport-rebo.ch",
                     phone: "0448103333"
                 }
-            ],
-                { transaction: t });
+            ], { transaction: t });
 
-            //  Create Users
+            // Create Users
             const users = await User.bulkCreate([
-                {
-                    name: 'waseem',
-                    email: 'admin@gmail.com',
-                    password: 'Testing+1',
-                    role: 'super_admin',
-                    is_verified: true,
-                },
-                {
-                    name: 'ahmed',
-                    email: 'siteAdmin@gmail.com',
-                    password: 'Testing+1',
-                    role: 'site_admin',
-                    is_verified: true,
-                },
-                {
-                    name: 'John',
-                    email: 'client@gmail.com',
-                    password: 'Testing+1',
-                    role: 'client',
-                    is_verified: true,
-                },
-                {
-                    name: 'Michael',
-                    email: 'companyAdmin@gmail.com',
-                    password: 'Testing+1',
-                    role: 'company_admin',
-                    company_id: company.id,
-                    is_verified: true,
-                },
-                {
-                    name: 'Sarah',
-                    email: 'worker@gmail.com',
-                    password: 'Testing+1',
-                    role: 'worker',
-                    company_id: company.id,
-                    is_verified: true,
-                }
+                { name: 'waseem', email: 'admin@gmail.com', password: 'Testing+1', role: 'super_admin', is_verified: true },
+                { name: 'ahmed', email: 'siteAdmin@gmail.com', password: 'Testing+1', role: 'site_admin', is_verified: true },
+                { name: 'John', email: 'client@gmail.com', password: 'Testing+1', role: 'client', is_verified: true },
+                { name: 'Michael', email: 'companyAdmin@gmail.com', password: 'Testing+1', role: 'company_admin', company_id: companies[0].id, is_verified: true },
+                { name: 'Sarah', email: 'worker@gmail.com', password: 'Testing+1', role: 'worker', company_id: companies[0].id, is_verified: true }
             ], { transaction: t, individualHooks: true });
 
-            //  Create Services
+            // Create Services
             const services = await Service.bulkCreate([
-                {
-                    name: 'Moving',
-                    description: 'Full-service moving including packing and unpacking',
-                },
-                {
-                    name: 'Cleaning',
-                    description: 'Deep cleaning services for homes and offices',
-                },
-                {
-                    name: 'Painting',
-                    description: 'Interior and exterior painting services',
-                }
+                { name: 'Moving', description: 'Full-service moving including packing and unpacking' },
+                { name: 'Cleaning', description: 'Deep cleaning services for homes and offices' },
+                { name: 'Painting', description: 'Interior and exterior painting services' }
             ], { transaction: t });
 
-            //  Create Additions
+            // Create Additions
             const additions = await Addition.bulkCreate([
-                {
-                    name: 'custom'
-                },
-                {
-                    name: 'Extra boxes',
-                },
-                {
-                    name: 'Fragile item handling',
-                },
-                {
-                    name: 'Eco cleaning materials',
-                }
+                { name: 'custom' },
+                { name: 'Extra boxes' },
+                { name: 'Fragile item handling' },
+                { name: 'Eco cleaning materials' }
             ], { transaction: t });
 
-            // Associate Company with Services (Moving and Cleaning)
+            // Associate Company with Services
             await CompanyService.bulkCreate([
-                {
-                    company_id: company[0].id,
-                    service_id: services[0].id // Moving
-                },
-                {
-                    company_id: company[0].id,
-                    service_id: services[1].id // Cleaning
-                }
+                { company_id: companies[0].id, service_id: services[0].id },
+                { company_id: companies[0].id, service_id: services[1].id }
             ], { transaction: t });
 
+            // Associate Services with Additions
             await ServiceAddition.bulkCreate([
-                {
-                    service_id: services[0].id,
-                    addition_id: additions[1].id
-                },
-                {
-                    service_id: services[0].id,
-                    addition_id: additions[2].id
-                }
+                { service_id: services[0].id, addition_id: additions[1].id },
+                { service_id: services[0].id, addition_id: additions[2].id }
             ], { transaction: t });
 
-            // Create Locations for the order
+            // Create Locations
             const pickupLocation = await Location.create({
                 address: '456 Oak Street, Example City',
                 lat: 40.7128,
@@ -166,28 +105,42 @@ export const seed = async () => {
                 zip_code: '67890'
             }, { transaction: t });
 
-            // Create an Order for the client (John - users[2])
+            // Create Order
             const order = await Order.create({
-                client_id: users[2].id, // John (client)
-                location_id: pickupLocation.id,
-                destination_location_id: destinationLocation.id,
-                preferred_date: '2025-11-15',
-                preferred_time: '09:00:00',
-                number_of_rooms: 3.5,
-                notes: 'Please handle fragile items with care. Have some antique furniture.',
-                status: 'pending'
+                client_id: users[2].id,
+                company_id: companies[0].id,
+                primary_location_id: pickupLocation.id,
+                secondary_location_id: destinationLocation.id,
+                execution_date: '2025-11-15',
+                execution_time: '09:00:00',
+                status: 'pending',
+                notes: 'Please handle fragile items with care. Have some antique furniture.'
             }, { transaction: t });
 
-            // Create OrderServices for the order (Moving and Cleaning)
+            // Create OrderServices
             await OrderService.bulkCreate([
                 {
                     order_id: order.id,
                     service_id: services[0].id, // Moving
+                    primary_location_id: pickupLocation.id,
+                    secondary_location_id: destinationLocation.id,
+                    preferred_date: '2025-11-15',
+                    preferred_time: '09:00:00',
+                    pricing_type: 'custom',
+                    price_per_unit: 0,
+                    minimum_charge: 0,
                     status: 'pending'
                 },
                 {
                     order_id: order.id,
                     service_id: services[1].id, // Cleaning
+                    primary_location_id: pickupLocation.id,
+                    secondary_location_id: destinationLocation.id,
+                    preferred_date: '2025-11-15',
+                    preferred_time: '09:00:00',
+                    pricing_type: 'custom',
+                    price_per_unit: 0,
+                    minimum_charge: 0,
                     status: 'pending'
                 }
             ], { transaction: t });
@@ -199,8 +152,3 @@ export const seed = async () => {
         throw error;
     }
 };
-
-// The seeder exposes the `seed` function. To run it directly from the
-// command line create a small runner script or call this function from
-// your application. This prevents the seeder from auto-running when
-// imported by other modules (e.g. the seed endpoint).

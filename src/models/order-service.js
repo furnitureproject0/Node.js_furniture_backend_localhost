@@ -98,9 +98,19 @@ const OrderService = sequelize.define('OrderService', {
         allowNull: false,
         defaultValue: 'pending'
     },
-    total_price: {
+    fixed_price: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
+        defaultValue: 0
+    },
+    min_total_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+        defaultValue: 0
+    },
+    max_total_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
         defaultValue: 0
     },
     details: {
