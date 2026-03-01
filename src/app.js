@@ -47,9 +47,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    // origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL,
     // origin: '*', // Allow all origins for testing; change in production
-    origin: true,
+    // origin: true,
     credentials: true
 }));
 // app.use(cors());
