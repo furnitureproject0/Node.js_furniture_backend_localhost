@@ -45,6 +45,8 @@ import notification from './routes/notification-routes.js';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const allowedOrigins = process.env.CLIENT_URLS.split(',');
 
 // Middleware
