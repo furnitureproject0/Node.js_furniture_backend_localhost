@@ -6,6 +6,7 @@ import { getUser } from '../services/user/index.js';
 import { cancelOrder } from '../services/order/index.js';
 import { getCompanyAdmins } from '../services/company/index.js'; 
 import { createNotification, sendNotification } from '../utils/notifications.js';
+import { getOrderPDFDataService, formatOrderData, buildAndStreamPDF } from '../services/print-report/index.js';
 
 
 export const getOrders = asyncHandler(async (req, res) => {
@@ -255,5 +256,23 @@ export const cancelOrderByAdmin = asyncHandler(async (req, res) => {
     } catch (error) {
         await transaction.rollback();
         throw new AppError(error.message || 'Failed to cancel order', 500);
+    }
+});
+
+export const downloadOrderPDF = asyncHandler(async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // 1. الداتا هترجع من السيرفيس متنسقة وجاهزة 100%
+        const orderData = await getOrderPDFDataService(id);
+
+        if (!orderData) {
+            throw new AppError('Order not found', 404);
+        }
+
+        await buildAndStreamPDF(orderData, res); 
+        
+    } catch (error) {
+        throw new AppError(error.message || 'Failed to generate PDF', error.statusCode || 500);
     }
 });

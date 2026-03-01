@@ -21,7 +21,8 @@ export const createUserService = async (userData, options = {}) => {
         role = 'client', 
         company_id,
         location,
-        phones = [], 
+        phones = [],
+        is_verified
     } = userData;
 
     const userExists = await User.findOne({
@@ -61,6 +62,7 @@ export const createUserService = async (userData, options = {}) => {
         birthdate,
         role,
         company_id,
+        is_verified,
         location_id: locationId
     }, { transaction });
 

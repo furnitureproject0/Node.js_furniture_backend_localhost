@@ -57,5 +57,13 @@ export const locationSchema = Joi.object({
         .trim()
         .max(1000)
         .optional()
+        .allow(null),
+    rooms: Joi.number()
+        .min(0)
+        .precision(2)
+        .optional()
+        .allow(null),
+    qualities: Joi.object()
+        .optional()
         .allow(null)
 })

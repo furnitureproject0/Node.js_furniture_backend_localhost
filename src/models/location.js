@@ -50,6 +50,10 @@ const Location = sequelize.define('Location', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    rooms: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     // has_elevator: {
     //     type: DataTypes.BOOLEAN,
     //     allowNull: true,

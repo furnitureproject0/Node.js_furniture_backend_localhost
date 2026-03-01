@@ -31,6 +31,7 @@ export const getOrCreateLocation = async (locationData, options = {}) => {
         floor: locationData.floor || null,
         area: locationData.area || null,
         number_of_floors: locationData.number_of_floors || null,
+        rooms: locationData.rooms || null,
         // uncomment if you add has_elevator to model
         // has_elevator: locationData.has_elevator || false,
         lat: locationData.latitude || null,
