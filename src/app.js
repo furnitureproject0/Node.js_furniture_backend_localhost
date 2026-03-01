@@ -45,9 +45,17 @@ import notification from './routes/notification-routes.js';
 
 const app = express();
 
+const allowedOrigins = process.env.CLIENT_URLS.split(',');
+
 // Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 // app.use(cors());
