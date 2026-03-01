@@ -45,7 +45,6 @@ import notification from './routes/notification-routes.js';
 
 const app = express();
 
-app.set('trust proxy', 1);
 
 const allowedOrigins = process.env.CLIENT_URLS.split(',');
 
@@ -58,8 +57,13 @@ app.use(cors({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
+app.set('trust proxy', 1);
+
 // app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
