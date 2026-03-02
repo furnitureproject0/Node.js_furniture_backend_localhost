@@ -1,12 +1,12 @@
 import asyncHandler from 'express-async-handler';
 import AppError from '../utils/AppError.js';
-import { getAllOrders, createOrderService, updateOrderService } from '../services/order-v2/index.js';
+import { getAllOrders, createOrderService, updateOrderService, getOrderById } from '../services/order-v2/index.js';
 import sequelize from '../config/database.js';
 import { getUser } from '../services/user/index.js';
 import { cancelOrder } from '../services/order/index.js';
 import { getCompanyAdmins } from '../services/company/index.js'; 
 import { createNotification, sendNotification } from '../utils/notifications.js';
-import { getOrderPDFDataService, formatOrderData, buildAndStreamPDF } from '../services/print-report/index.js';
+import { getOrderPDFDataService, buildAndStreamPDF } from '../services/print-report/index.js';
 
 
 export const getOrders = asyncHandler(async (req, res) => {
@@ -38,6 +38,26 @@ export const getOrders = asyncHandler(async (req, res) => {
         });
     } catch (error) {
         throw new AppError(error.message || 'Failed to retrieve orders', 500);
+    }
+});
+
+export const getOrderDetails = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const order = await getOrderById(id, 'order');
+
+        if (!order) {
+            throw new AppError('Order not found', 404);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Order details retrieved successfully',
+            data: order
+        });
+    } catch (error) {
+        throw new AppError(error.message || 'Failed to retrieve order details', error.statusCode || 500);
     }
 });
 
