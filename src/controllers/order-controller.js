@@ -7,6 +7,7 @@ import { cancelOrder } from '../services/order/index.js';
 import { getCompanyAdmins } from '../services/company/index.js'; 
 import { createNotification, sendNotification } from '../utils/notifications.js';
 import { getOrderPDFDataService, buildAndStreamPDF } from '../services/print-report/index.js';
+import { getOrderServicesByDate } from '../services/order-service/index.js';
 
 
 export const getOrders = asyncHandler(async (req, res) => {
@@ -296,3 +297,32 @@ export const downloadOrderPDF = asyncHandler(async (req, res) => {
         throw new AppError(error.message || 'Failed to generate PDF', error.statusCode || 500);
     }
 });
+
+
+export const getFilteredOrderServices = async (req, res, next) => {
+    try {
+        const { 
+            startDate, 
+            endDate, 
+            type, // order, offer, appointment
+            status, 
+            company_id,
+            page, 
+            limit 
+        } = req.query;
+
+        const filters = { startDate, endDate, orderType: type, status, company_id };
+        const pagination = { page, limit };
+
+        const result = await getOrderServicesByDate(filters, pagination);
+
+        res.status(200).json({
+            success: true,
+            message: 'Order services retrieved successfully',
+            data: result.services,
+            meta: result.pagination
+        });
+    } catch (err) {
+        next(err);
+    }
+};

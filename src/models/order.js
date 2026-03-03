@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 import User from './user.js';
-import Location from './location.js';
 
 const Order = sequelize.define('Order', {
     id: {

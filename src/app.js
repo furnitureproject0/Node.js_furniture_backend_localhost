@@ -40,6 +40,7 @@ import offer from './routes/offer-routes.js';
 import user from './routes/user-routes.js';
 import userCompany from './routes/user-company-routes.js';
 import notification from './routes/notification-routes.js';
+import appointment from './routes/appointment-routes.js';
 //
 
 
@@ -95,6 +96,7 @@ app.use('/api/offers-v2', offer);
 app.use('/api/users-v2', user);
 app.use('/api/admin-companies-v2', userCompany);
 app.use('/api/notifications-v2', notification);
+app.use('/api/appointments', appointment);
 // Test mail endpoint
 app.get('/api/testmail', testMail);
 

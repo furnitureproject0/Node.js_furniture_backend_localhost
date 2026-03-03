@@ -22,6 +22,7 @@ import NotificationRecipient from './notification_recipients.js';
 import Vehicle from './vehicle.js';
 import OrderVehicle from './order-vehicle.js';
 import UserCompany from './user-company.js';
+import Appointment from './appointment.js';
 
 // Company Social Media
 Company.hasMany(CompanySocialMedia, {
@@ -488,6 +489,34 @@ Offer.belongsTo(Order, {
     as: 'order'
 });
 
+// Appointment associations
+Appointment.belongsTo(Company, {  
+    foreignKey: 'company_id',
+     as: 'company'
+});
+Company.hasMany(Appointment, {  
+    foreignKey: 'company_id',
+    as: 'appointments'
+});
+
+Appointment.belongsTo(User, {  
+    foreignKey: 'client_id', 
+    as: 'client'
+});
+User.hasMany(Appointment, {  
+    foreignKey: 'client_id', 
+    as: 'appointments'
+});
+
+Appointment.belongsTo(Order, {  
+    foreignKey: 'order_id', 
+    as: 'order'
+});
+Order.hasMany(Appointment, {  
+    foreignKey: 'order_id', 
+    as: 'appointments'
+});
+
 
 export {
     User,
@@ -513,5 +542,6 @@ export {
     NotificationRecipient,
     Vehicle,
     OrderVehicle,
-    UserCompany
+    UserCompany,
+    Appointment
 };

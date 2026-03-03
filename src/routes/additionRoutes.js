@@ -6,9 +6,11 @@ import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.use(protect);
+
 router.get('/', getAllAdditions); // public
 router.get('/:id', getAdditionById); // public
-router.post('/', protect, authorize('super_admin'), validate(createAdditionSchema), createAddition);
-router.patch('/:id', protect, authorize('super_admin'), validate(updateAdditionSchema), updateAddition)
+router.post('/', authorize('super_admin'), validate(createAdditionSchema), createAddition);
+router.patch('/:id', authorize('super_admin'), validate(updateAdditionSchema), updateAddition)
 
 export default router;
