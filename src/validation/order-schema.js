@@ -5,6 +5,8 @@ import { createOfferSchema } from './offer-schema.js';
 const orderServicesSchema = Joi.array().items(
     Joi.object({
         service_id: Joi.number().integer().required(),
+        preferred_date: Joi.date().required(),
+        preferred_time: Joi.string().required(),
         pricing_type: Joi.string().valid('per_hour', 'per_square_meter', 'per_cubic_meter', 'per_quantity', 'per_room', 'flat_rate', 'max_price', 'custom').optional(),
         price_per_unit: Joi.number().precision(2).min(0).optional(), // Changed to min(0) to allow free if needed
         fixed_price: Joi.number().precision(2).min(0).optional(), // 👈 Added for Hybrid/Flat pricing
