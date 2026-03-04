@@ -27,13 +27,13 @@ services:
       - .env
     depends_on:
       - db
-    # command: >
-    #   sh -c "
-    #   apk add --no-cache curl netcat-openbsd &&
-    #   until nc -z db 3306; do echo Waiting for DB; sleep 2; done &&
-    #   node src/app.js
-    #   "
-    command: npx nodemon src/app.js
+    command: >
+      sh -c "
+      apk add --no-cache curl netcat-openbsd &&
+      until nc -z db 3306; do echo Waiting for DB; sleep 2; done &&
+      node src/app.js
+      "
+    # command: npx nodemon src/app.js
 
 volumes:
   db_data:
