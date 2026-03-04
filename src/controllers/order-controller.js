@@ -18,10 +18,13 @@ export const getOrders = asyncHandler(async (req, res) => {
         status, 
         execution_date, 
         min_price, 
-        max_price 
+        max_price,
+        type
     } = req.query;
     
-    const filters = { status, execution_date, min_price, max_price, type: 'order' }; // Ensure we only fetch orders, not offers or appointments
+    // If `type` is provided (order/offer), filter by it. Otherwise return all types.
+    // Appointments are stored in a separate table and won't appear here.
+    const filters = { status, execution_date, min_price, max_price, ...(type ? { type } : {}) };
     const pagination = { page, limit };
 
     try {
