@@ -461,3 +461,43 @@ export const createOrderAsSiteAdmin = asyncHandler(async (req, res) => {
         data: { order: result }
     });
 });
+
+export const convertToOrder = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const result = await sequelize.transaction(async (t) => {
+        const order = await Order.findByPk(id, { transaction: t });
+
+        if (!order) {
+            throw new AppError('Order/Offer not found', 404);
+        }
+
+        // Check if already an order
+        if (order.type === 'order') {
+            throw new AppError('This record is already an order', 400);
+        }
+
+        const oldType = order.type;
+
+        // Update order
+        await order.update({
+            type: 'order',
+            status: 'pending' // Reset status to pending when converting
+        }, { transaction: t });
+
+        // Add timeline entry
+        await OrderTimeline.create({
+            order_id: id,
+            status: 'pending',
+            message: `Converted from ${oldType} to order by ${req.user.name} (${req.user.role})`
+        }, { transaction: t });
+
+        return order;
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Converted to order successfully',
+        data: { order: result }
+    });
+});

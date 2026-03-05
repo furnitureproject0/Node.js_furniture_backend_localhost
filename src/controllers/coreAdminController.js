@@ -10,6 +10,7 @@ import { sendNewClientAccountCredentialsTemplate, updateClientProfileTemplate, g
 import sendEmail from '../utils/sendEmail.js';
 import { createNotification, sendNotification, createAndSendNotification } from '../utils/notifications.js';
 import { generateOTP } from '../utils/genarators/otp-generator.js';
+import { generateRandomPassword } from '../utils/passwordGenerator.js';
 
 
 
@@ -90,7 +91,11 @@ export const createClient = asyncHandler(async (req, res) => {
 
     try {
 
-        const { name, email, password, birthdate, location, phones } = req.body;
+        let { name, email, password, birthdate, location, phones } = req.body;
+
+        if (!password) {
+            password = generateRandomPassword();
+        }
 
         const userExists = await User.findOne({
             where: { email },
@@ -103,7 +108,7 @@ export const createClient = asyncHandler(async (req, res) => {
 
         const existingPhones = await Phone.findAll({
             where: {
-                phone: { [Op.in]: phones },
+                phone: { [Op.in]: phones || [] },
                 owner_type: 'User'
             },
             transaction
@@ -117,7 +122,11 @@ export const createClient = asyncHandler(async (req, res) => {
             );
         }
 
-        const newLocation = await Location.create(location, { transaction });
+        let locationId = null;
+        if (location && location.address) {
+            const newLocation = await Location.create(location, { transaction });
+            locationId = newLocation.id;
+        }
 
         const newUser = await User.create({
             name,
@@ -125,10 +134,10 @@ export const createClient = asyncHandler(async (req, res) => {
             password,
             birthdate,
             role: 'client',
-            location_id: newLocation.id
+            location_id: locationId
         }, { transaction });
 
-        const phonesToCreate = phones.map(phone => ({
+        const phonesToCreate = (phones || []).map(phone => ({
             phone,
             owner_id: newUser.id,
             owner_type: 'User'
@@ -164,7 +173,7 @@ export const createClient = asyncHandler(async (req, res) => {
             success: true,
             message: "Client created successfully",
             data: {
-                user: newUser.toJSON()
+                client: newUser.toJSON()
             }
         });
 
