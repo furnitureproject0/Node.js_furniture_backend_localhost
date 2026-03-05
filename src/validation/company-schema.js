@@ -20,9 +20,9 @@ export const createCompanySchema = Joi.object({
             'string.base': 'Address must be a string',
             'string.max': 'Address cannot exceed 2000 characters'
         }),
-    lon: Joi.number().optional(),
-    lat: Joi.number().optional(),
-    fax: Joi.string().optional(),
+    // lon: Joi.number().optional(),
+    // lat: Joi.number().optional(),
+    // fax: Joi.string().optional(),
     website: Joi.string().uri().required(),
     email,
     phones,
@@ -30,7 +30,9 @@ export const createCompanySchema = Joi.object({
         platform: Joi.string().required(),
         url: Joi.string().uri().required()
     })).optional(),
-    services: Joi.array().items(Joi.number().integer().positive()).min(1).required()
+    services: Joi.array().items(Joi.number().integer().positive()).min(1).optional(),
+    status: Joi.string().valid('active', 'suspended').optional(),
+    logo: Joi.string().optional() // This will be handled by multer, so we just need to allow it as a string
 });
 
 export const updateCompanySchema = createCompanySchema.fork(
