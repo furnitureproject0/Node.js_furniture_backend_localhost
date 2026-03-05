@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import sequelize from '../config/database.js';
 import AppError from '../utils/AppError.js';
-import { assignCompaniesToUserService, removeCompanyFromUserService, getAdminCompaniesService } from '../services/user-company/index.js'; 
+import { assignCompaniesToUserService, removeCompanyFromUserService, getAdminCompaniesService, updateUserCompanyAssignmentsService } from '../services/user-company/index.js'; 
 
 
 export const getAdminCompanies = asyncHandler(async (req, res) => {
@@ -92,5 +92,34 @@ export const removeCompanyFromAdmin = asyncHandler(async (req, res) => {
             await transaction.rollback();
         }
         throw new AppError(error.message || 'Failed to remove company assignment', error.statusCode || 500);
+    }
+});
+
+export const updateUserCompanyAssignments = asyncHandler(async (req, res) => {
+    const transaction = await sequelize.transaction();
+
+    try {
+        const { id } = req.params;
+        const { assignments } = req.body;
+
+        const updatedAssignments = await updateUserCompanyAssignmentsService(
+            id,
+            assignments,
+            { transaction }
+        );
+
+        await transaction.commit();
+
+        res.status(200).json({
+            success: true,
+            message: 'Company assignments updated successfully',
+            data: updatedAssignments
+        });
+
+    } catch (error) {
+        if (transaction && !transaction.finished) {
+            await transaction.rollback();
+        }
+        throw new AppError(error.message || 'Failed to update company assignments', error.statusCode || 500);
     }
 });
